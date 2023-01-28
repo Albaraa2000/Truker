@@ -2,7 +2,13 @@ const equipments= require('../models/equipmentsModel');
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 
 exports.createEquipments = catchAsync(async (req, res, next) => {
-  const newEquipment = await equipments.create(req.body);
+  const newEquipment = await equipments.create({
+    title: req.body.title,
+    description: req.body.description,
+    photo: req.body.photo,
+    price: req.body.price,
+    rating: req.body.rating
+  });
   res.status(201).json({
     status: 'success',
     data: {
