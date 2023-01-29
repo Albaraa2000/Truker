@@ -44,6 +44,7 @@ exports.login = catchAsync(async (req, res, next) => {
     status: 'success',
     token,
   });
+  
   // // 3) If everything ok, send token to client
   // createSendToken(user, 200, res);
 });
