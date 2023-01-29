@@ -13,6 +13,10 @@ const equipmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
   price: {
     type: Number,
     required: true,
@@ -20,6 +24,10 @@ const equipmentSchema = new mongoose.Schema({
   rating: {
     type: Number,
     required: true,
+  },
+  favourite: {
+    type: Boolean,
+    default: false,
   },
 });
 

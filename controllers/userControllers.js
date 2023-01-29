@@ -11,12 +11,12 @@ exports.getAllusers =  catchAsync( async(req, res,next) => {
     },
   });
 });
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'succes',
-    message: 'not Yet Implemented',
-  });
-};
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  res.status(200).json({
+    status: "success",
+    user
+  })})
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'succes',
