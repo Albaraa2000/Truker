@@ -7,11 +7,15 @@ const equipmentSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: [true,"please provide description"],
+  },
+  avatar: {
+    type: String,
+    required: [true,"please provide avatar"],
   },
   photo: {
     type: String,
-    required: true,
+    required: [true,"please provide photo"],
   },
   type: {
     type: String,
@@ -19,11 +23,11 @@ const equipmentSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: true,
+    required: [true,"please provide  price"],
   },
   rating: {
     type: Number,
-    required: true,
+    required: [true,"please provide rating"],
   },
   favourite: {
     type: Boolean,
