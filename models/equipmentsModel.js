@@ -29,6 +29,11 @@ const equipmentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+    select: false,
+  },
 });
 
 const Equipment = mongoose.model("Equipment", equipmentSchema);
