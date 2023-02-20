@@ -1,28 +1,20 @@
-<form method="POST" action="https://rich-gray-elephant-cuff.cyclic.app/api/v1/Equipments/" enctype="multipart/form-data">
-    <label for="title">Title</label>
-    <input type="text" name="title" id="title" required>
-  
-    <label for="description">Description</label>
-    <textarea name="description" id="description" required></textarea>
-  
-    <label for="photo">Photo</label>
-    <input type="file" name="image" id="image" accept="image/*" required>
-  
-    <label for="price">Price</label>
-    <input type="number" name="price" id="price" required>
-  
-    <label for="rating">Rating</label>
-    <input type="number" name="rating" id="rating" required>
-  
-    <label for="favourite">Favourite</label>
-    <input type="checkbox" name="favourite" id="favourite">
-  
-    <label for="type">Type</label>
-    <select name="type" id="type" required>
-      <option value="offer">Offer</option>
-      <option value="request">Request</option>
-    </select>
-  
-    <button type="submit">Create Equipment</button>
-  </form>
-  
+<form
+  method="POST"
+  action="https://rich-gray-elephant-cuff.cyclic.app/api/v1/Equipments/"
+  enctype="multipart/form-data"
+>
+  <input type="text" name="title" />
+  <hr />
+  <input type="text" name="photo" />
+  <hr />
+  <input type="text" name="description" />
+  <hr />
+  <input type="file" name="photo" id="image" accept="image/*" />
+  <hr />
+  <input type="number" name="price" id="price" />
+  <hr />
+  <input type="number" name="rating" id="rating" />
+  <hr />
+  <input type="text" name="type" />
+  <input type="submit" value="submit" />
+</form>
