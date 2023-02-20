@@ -1,20 +1,10 @@
 const equipments = require("../models/equipmentsModel");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
-const multer = require('multer');
+
 const cloudinary = require('cloudinary').v2;
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
 
-// configure multer upload
-const upload = multer({ storage: storage });
 // Configuration 
 cloudinary.config({
   cloud_name: "dnp0llgn2",
@@ -46,7 +36,7 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
     status: 'success',
     newEquipment
   });
-},upload.single('photo'));
+});
 
 
 exports.getAllequipments = catchAsync(async (req, res, next) => {
