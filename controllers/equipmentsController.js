@@ -1,19 +1,15 @@
 const equipments = require("../models/equipmentsModel");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
-
-const cloudinary = require("cloudinary").v2;
-
-// Configuration
-cloudinary.config({
-  cloud_name: "dnp0llgn2",
-  api_key: "794648356647968",
-  api_secret: "284gqPXRS4Q3gSF5fimyGwML4v0",
-});
+const cloudinary = require("./cloudinary");
 
 exports.createEquipments = catchAsync(async (req, res, next) => {
   // Use Cloudinary SDK to upload the image
-  const result = await cloudinary.uploader.upload(req.file.path);
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    tags: "equipments",
+    folder: "tools/",
+    public_id: "tool_id",
+  });
   const newEquipment = await equipments.create({
     title: req.body.title,
     description: req.body.description,
