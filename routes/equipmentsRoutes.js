@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const equipmentsController = require("../controllers/equipmentsController");
+const upload = require("../controllers/imgControllers");
 
 
 router
   .route("/")
-  .post(equipmentsController.createEquipments)
+  .post(upload.single("image"),equipmentsController.createEquipments)
   .get(equipmentsController.getAllequipments);
 
 router.route("/:id").get(equipmentsController.getEquipment);
