@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-const cloudinary = require("./cloudinary");
+
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -12,18 +12,14 @@ const signToken = (id) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const result = await cloudinary.uploader.upload(req.file.path, {
-    tags: "users",
-    folder: "users/",
-    public_id: "user_id",
-  });
+
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     avatar: req.body.avatar,
-    image: result.secure_url,
+ 
   });
   const token = signToken(newUser._id);
   res.status(201).json({
