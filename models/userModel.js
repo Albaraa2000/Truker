@@ -13,11 +13,6 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email"],
   },
-  image: {
-    type: String,
-    required: [true, "please provide a valid image"],
-
-  },
   password: {
     type: String,
     required: [true, "Please provide a valid password"],
@@ -36,7 +31,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default:"",
+    default: "",
   },
   passwordChangedAt: Date,
 });
