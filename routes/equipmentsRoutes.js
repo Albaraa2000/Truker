@@ -6,7 +6,7 @@ const upload = require("../controllers/multer");
 
 router
   .route("/")
-  .post(upload.single("image"),equipmentsController.createEquipments)
+  .post(upload.single("photo"),equipmentsController.createEquipments)
   .get(equipmentsController.getAllequipments);
 
 router.route("/:id").get(equipmentsController.getEquipment);

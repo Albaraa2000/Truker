@@ -8,12 +8,11 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
   const result = await cloudinary.uploader.upload(req.file.path, {
     tags: "equipments",
     folder: "tools/",
-    public_id: "tool_id",
   });
   const newEquipment = await equipments.create({
     title: req.body.title,
     description: req.body.description,
-    image: result.secure_url,
+    photo: result.secure_url,
     price: req.body.price,
     rating: req.body.rating,
     favourite: req.body.favourite,

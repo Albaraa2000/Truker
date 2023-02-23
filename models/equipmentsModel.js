@@ -9,7 +9,7 @@ const equipmentSchema = new mongoose.Schema({
     type: String,
     required: [true, "please provide description"],
   },
-  image: {
+  photo: {
     type: String,
     required: [true, "please provide photo"],
   },
