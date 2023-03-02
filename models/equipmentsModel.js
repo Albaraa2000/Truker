@@ -11,8 +11,7 @@ const equipmentSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    // required: [true, "please provide photo"],
-    default:"https://res.cloudinary.com/dnp0llgn2/image/upload/v1677118442/tools/dmwnufkdejh0rzzjtbcf.jpg"
+    required: [true, "please provide photo"],
   },
   type: {
     type: String,
