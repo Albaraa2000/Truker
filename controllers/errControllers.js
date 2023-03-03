@@ -1,22 +1,22 @@
 const AppError = require('./../utils/appError');
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path} : ${err.value}`;
-  return new AppError(message, 200);//404
+  return new AppError(message, 400);//404
 };
 const handleDuplicateFieldsDB = (err) => {
   const message = `Duplicate field ${err.keyValue.email}, please use another`;
-  return new AppError(message, 200);//404
+  return new AppError(message, 400);//404
 };
 
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
   const message = `Invalid input data. ${errors.join('. ')}`;
-  return new AppError(message, 200);//400
+  return new AppError(message, 400);//400
 };
 const handleJWTError = () =>
-  new AppError('invalid token. Please log in again!', 200);
+  new AppError('invalid token. Please log in again!', 401);//401
 const handleExpiredJWT = () =>
-  new AppError('Expired token. Please log in again!', 200);
+  new AppError('Expired token. Please log in again!', 401); //401
   
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -47,7 +47,7 @@ const sendErrorprod = (err, res) => {
 };
 //main error handler
 module.exports = (err, req, res, next) => {
-  err.statusCode = err.statusCode || 200;
+  err.statusCode = err.statusCode || 500; //500
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {

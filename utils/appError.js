@@ -2,7 +2,7 @@ class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('2') ? 'success' : 'error';
+    this.status = `${statusCode}`.startsWith('4') ? 'success' : 'error';
     this.isOperational = true;
     Error.captureStackTrace(this, this.constructor);
   }
