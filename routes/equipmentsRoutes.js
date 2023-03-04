@@ -7,15 +7,12 @@ const upload = require("../controllers/multer");
 
 router
   .route("/")
-  .post(
-    upload.single("photo"),
-    equipmentsController.createEquipments
-  )
-  .get(authController.protect,equipmentsController.getAllequipments);
+  .post(upload.single("photo"), equipmentsController.createEquipments)
+  .get(equipmentsController.getAllequipments);
 
 router
   .route("/:id")
-  .get(authController.protect, equipmentsController.getEquipment)
-  .delete(authController.protect,equipmentsController.deleteEquipment)
-  .patch(authController.protect,equipmentsController.updateEquipment);
+  .get(equipmentsController.getEquipment)
+  .delete(authController.protect, equipmentsController.deleteEquipment)
+  .patch(authController.protect, equipmentsController.updateEquipment);
 module.exports = router;
