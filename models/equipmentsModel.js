@@ -34,6 +34,7 @@ const equipmentSchema = new mongoose.Schema({
     default: Date.now(),
     select: false,
   },
+  userId: String,
 });
 
 const Equipment = mongoose.model("Equipment", equipmentSchema);

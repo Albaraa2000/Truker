@@ -59,23 +59,39 @@ exports.protect = catchAsync(async (req, res, next) => {
   let token;
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    req.headers.authorization.startsWith('Bearer')
   ) {
-    token = req.headers.authorization.split(" ")[1];
+    token = req.headers.authorization.split(' ')[1];
   }
   if (!token) {
     return next(
-      new AppError("You are not authorized to access this page", 401)//401
+      new AppError('You are not authorized to access this page', 401)
     );
   }
-  //2 Verfication Token
+  //2 Verfication Token =====> if someone manipulate the data or token expired
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  // console.log(decoded);
   //3 check if user still exist
-  const freshUser = await User.findById(decoded.id);
-  if (!freshUser) {
-    return next(new AppError("user has been deleted", 401));//401
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(new AppError('user has been deleted', 401));
   }
   // check if user changed password
-  freshUser.changedPasswordAfter(decoded.iat);
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError('user changed password please, log in again', 401)
+    );
+  }
+  // get access to next
+  req.user = currentUser;
+  // console.log(req.user)
   next();
 });
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError("you dont have permission to do that", 403));
+    }
+    next();
+  };
+};

@@ -5,6 +5,7 @@ const cloudinary = require("./cloudinary");
 
 exports.createEquipments = catchAsync(async (req, res, next) => {
   // Use Cloudinary SDK to upload the image
+
   const result = await cloudinary.uploader.upload(req.file.path, {
     tags: "equipments",
     folder: "tools/",
@@ -17,8 +18,8 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
     rating: req.body.rating,
     favourite: req.body.favourite,
     type: req.body.type,
+    userId: req.user._id,
   });
-  console.log(newEquipment);
 
   res.status(201).json({
     status: "success",
@@ -37,11 +38,50 @@ exports.getAllequipments = catchAsync(async (req, res, next) => {
 });
 exports.getEquipment = catchAsync(async (req, res, next) => {
   const oneEquipment = await equipments.findById(req.params.id);
+
   if (!oneEquipment)
     return next(
       new AppError(`there is no equipment with id ${req.params.id}`, 404)
     );
+
   res.status(200).json({
     oneEquipment,
+  });
+});
+exports.deleteEquipment = catchAsync(async (req, res, next) => {
+  const oneEquipment = await equipments.findByIdAndDelete(req.params.id);
+  if (req.user._id != oneEquipment.userId) {
+    return next(
+      new AppError(`You are not authorized to delete this item`, 403)
+    );
+  }
+  if (!oneEquipment)
+    return next(
+      new AppError(`there is no equipment with id ${req.params.id}`, 404)
+    );
+  res.status(204).json({
+    Message: "done",
+  });
+});
+exports.updateEquipment = catchAsync(async (req, res, next) => {
+  const Equipment = await equipments.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  if (req.user._id != Equipment.userId) {
+    return next(
+      new AppError(`You are not authorized to update this item`, 403)
+    );
+  }
+  if (!Equipment)
+    return next(
+      new AppError(`there is no equipment with id ${req.params.id}`, 404)
+    );
+  res.status(200).json({
+    Equipment,
   });
 });

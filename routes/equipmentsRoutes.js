@@ -1,13 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const equipmentsController = require("../controllers/equipmentsController");
-const upload = require("../controllers/multer");
+const authController = require("../controllers/authControllers");
 
+const upload = require("../controllers/multer");
 
 router
   .route("/")
-  .post(upload.single("photo"),equipmentsController.createEquipments)
+  .post(
+    authController.protect,
+    upload.single("photo"),
+    equipmentsController.createEquipments
+  )
   .get(equipmentsController.getAllequipments);
 
-router.route("/:id").get(equipmentsController.getEquipment);
+router
+  .route("/:id")
+  .get(authController.protect, equipmentsController.getEquipment)
+  .delete(authController.protect,equipmentsController.deleteEquipment)
+  .patch(authController.protect,equipmentsController.updateEquipment);
 module.exports = router;
