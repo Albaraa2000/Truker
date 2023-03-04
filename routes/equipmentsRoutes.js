@@ -8,7 +8,6 @@ const upload = require("../controllers/multer");
 router
   .route("/")
   .post(
-    authController.protect,
     upload.single("photo"),
     equipmentsController.createEquipments
   )
