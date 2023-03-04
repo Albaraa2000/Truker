@@ -19,7 +19,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     avatar: req.body.avatar,
- 
+    role: req.body.role
   });
   const token = signToken(newUser._id);
   res.status(201).json({
@@ -55,6 +55,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
+
   //1 get token and check if it exists
   let token;
   if (
@@ -95,3 +96,9 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+
+
+
+
+

@@ -25,10 +25,6 @@ const equipmentSchema = new mongoose.Schema({
     type: Number,
     required: [true, "please provide rating"],
   },
-  favourite: {
-    type: Boolean,
-    default: false,
-  },
   createdAt: {
     type: Date,
     default: Date.now(),
