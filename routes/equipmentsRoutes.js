@@ -12,7 +12,7 @@ router
     upload.single("photo"),
     equipmentsController.createEquipments
   )
-  .get(authController.protect,equipmentsController.getAllequipments);
+  .get(equipmentsController.getAllequipments);
 
 router
   .route("/:id")
