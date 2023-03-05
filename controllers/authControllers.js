@@ -4,14 +4,21 @@ const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
-const crypto = require('crypto');
-
+const crypto = require("crypto");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+const createSendToken = (user,statusCode,res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({
+    status: "success",
+    token,
+  });
+};
+
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
@@ -22,12 +29,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     avatar: req.body.avatar,
     role: req.body.role,
   });
-  const token = signToken(newUser._id);
-  res.status(201).json({
-    status: "success",
-    token,
-    newUser,
-  });
+  createSendToken(newUser,201,res);
 });
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -42,7 +44,7 @@ exports.login = catchAsync(async (req, res, next) => {
     // instance method
     return next(new AppError("Incorrect email or password", 401)); //401
   }
-
+  //  3) If everything ok, send token to client
   const token = signToken(user._id);
   res.status(200).json({
     status: "success",
@@ -50,9 +52,7 @@ exports.login = catchAsync(async (req, res, next) => {
     id: user._id,
     token,
   });
-
-  // // 3) If everything ok, send token to client
-  // createSendToken(user, 200, res);
+ 
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -83,9 +83,8 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError("user changed password please, log in again", 401)
     );
   }
-  // get access to next
+  // get access to next requset
   req.user = currentUser;
-  // console.log(req.user)
   next();
 });
 exports.restrictTo = (...roles) => {
@@ -126,7 +125,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       message: "If you provided a valid email, message sent to your mail",
     });
   } catch (err) {
-     console.log(err);
+    console.log(err);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
@@ -138,16 +137,20 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 exports.resetPassword = catchAsync(async (req, res, next) => {
   const hashedToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(req.params.token)
-    .digest('hex');
+    .digest("hex");
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-
+  console.log(user.email);
   if (!user) {
-    return next(new AppError('Token has expired'), 400);
+    return next(new AppError("Token has expired"), 400);
+  }
+
+  if (user.email != req.body.email) {
+    return next(new AppError("Incorrect Email address"), 400);
   }
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
@@ -155,10 +158,25 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
-});
 
+  createSendToken(user, 200, res);
+
+});
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ email: req.user.email }).select(
+    "+password"
+  );
+
+  if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
+    return next(new AppError("Your Cuurent Password is wrong", 401)); //401
+  }
+  if (req.body.newPassword != req.body.newPasswordConfirm) {
+    return next(new AppError("Passwords do not match", 401)); //401
+  }
+  user.password = req.body.newPassword;
+  user.passwordConfirm = req.body.newPasswordConfirm;
+  await user.save();
+
+  createSendToken(user, 200, res);
+
+});
