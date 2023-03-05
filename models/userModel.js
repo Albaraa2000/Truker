@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passworResetExpires: Date,
+  passwordResetExpires: Date,
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -50,6 +50,13 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   // to delete the password confirmation from the database
   this.passwordConfirm = undefined;
+  next();
+});
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1;
+
   next();
 });
 // instance ====> method available in all documents

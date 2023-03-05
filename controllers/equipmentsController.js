@@ -1,4 +1,5 @@
 const equipments = require("../models/equipmentsModel");
+const APIFeatures = require(`${__dirname}/../utils/apiFeaturs`);
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
 
@@ -28,7 +29,13 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllequipments = catchAsync(async (req, res, next) => {
-  const equipment = await equipments.find();
+  const features = new APIFeatures(equipments, req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const equipment = await features.query;
   results = equipment.length;
   if (results == 0) return next(new AppError("there was no equipments", 404));
   res.status(200).json({
