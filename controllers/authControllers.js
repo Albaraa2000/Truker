@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-
+const sendEmail = require("./../utils/email");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -12,14 +12,13 @@ const signToken = (id) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     avatar: req.body.avatar,
-    role: req.body.role
+    role: req.body.role,
   });
   const token = signToken(newUser._id);
   res.status(201).json({
@@ -55,18 +54,17 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-
   //1 get token and check if it exists
   let token;
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
+    req.headers.authorization.startsWith("Bearer")
   ) {
-    token = req.headers.authorization.split(' ')[1];
+    token = req.headers.authorization.split(" ")[1];
   }
   if (!token) {
     return next(
-      new AppError('You are not authorized to access this page', 401)
+      new AppError("You are not authorized to access this page", 401)
     );
   }
   //2 Verfication Token =====> if someone manipulate the data or token expired
@@ -75,12 +73,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   //3 check if user still exist
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
-    return next(new AppError('user has been deleted', 401));
+    return next(new AppError("user has been deleted", 401));
   }
   // check if user changed password
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
-      new AppError('user changed password please, log in again', 401)
+      new AppError("user changed password please, log in again", 401)
     );
   }
   // get access to next
@@ -96,9 +94,43 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  // 1) Get user based on POSTed email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError("There is no user with email address.", 404));
+  }
 
+  // 2) Generate the random reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
 
+  // 3) Send it to user's email
+  const resetURL = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/users/resetPassword/${resetToken}`;
 
+  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Your password reset token (valid for 10 min)",
+      message,
+    });
 
-
+    res.status(200).json({
+      status: "success",
+      message: "If you provided a valid email, message sent to your mail",
+    });
+  } catch (err) {
+     console.log(err);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(
+      new AppError("There was an error sending the email. Try again later!"),
+      500
+    );
+  }
+});

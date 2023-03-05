@@ -1,6 +1,7 @@
 const equipments = require("../models/equipmentsModel");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
+
 const cloudinary = require("./cloudinary");
 
 exports.createEquipments = catchAsync(async (req, res, next) => {
