@@ -7,7 +7,7 @@ class APIFeatures {
   }
   filter() {
     const queryObj = { ...this.queryString };
-    console.log(queryObj); // ======> { sort: 'price,ratingsAverage', difficulty: 'easy' }
+    // console.log(queryObj); // ======> { sort: 'price,ratingsAverage', difficulty: 'easy' }
     //i want to exclude them because they are not in the database
     const excludedFields = ['page', 'limit', 'sort', 'fields'];
     excludedFields.forEach((ele) => {

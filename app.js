@@ -3,7 +3,7 @@ const morgan = require("morgan");
 
 const AppError = require("./utils/appError");
 const errControllers = require("./controllers/errControllers");
-const userRouter = require("./routes/userRoutes");
+const customerRouter = require("./routes/customerRoutes");
 const equipmentsRouter = require("./routes/equipmentsRoutes");
 const app = express();
 
@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", customerRouter);
 app.use("/api/v1/Equipments", equipmentsRouter);
 
 // handle unhandled routes

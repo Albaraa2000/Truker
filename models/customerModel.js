@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -14,6 +14,16 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email"],
+  },
+  phone: {
+    type: String,
+    required: [true, "please tell us your phone number"],
+    validate: {
+      validator: function (v) {
+        return validator.isMobilePhone(v, "ar-EG");
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
   },
   password: {
     type: String,
@@ -52,8 +62,8 @@ userSchema.pre("save", async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
-userSchema.pre('save', function (next) {
-  if (!this.isModified('password') || this.isNew) return next();
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1;
 
@@ -83,15 +93,15 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 };
 
 userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetToken = crypto.randomBytes(32).toString("hex");
   this.passwordResetToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(resetToken)
-    .digest('hex');
-  console.log({ resetToken },this.passwordResetToken);
+    .digest("hex");
+  console.log({ resetToken }, this.passwordResetToken);
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
-const User = new mongoose.model('User', userSchema);
+const User = new mongoose.model("User", userSchema);
 
 module.exports = User;

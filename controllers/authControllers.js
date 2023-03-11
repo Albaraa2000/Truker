@@ -1,6 +1,6 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
-const User = require("./../models/userModel");
+const User = require("../models/customerModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
@@ -23,11 +23,11 @@ const createSendToken = (user,statusCode,res) => {
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
+    phone: req.body.phone,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     avatar: req.body.avatar,
-    role: req.body.role,
   });
   createSendToken(newUser,201,res);
 });
@@ -170,9 +170,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
     return next(new AppError("Your Cuurent Password is wrong", 401)); //401
   }
-  if (req.body.newPassword != req.body.newPasswordConfirm) {
-    return next(new AppError("Passwords do not match", 401)); //401
-  }
+  // if (req.body.newPassword != req.body.newPasswordConfirm) {
+  //   return next(new AppError("Passwords do not match", 401)); //401
+  // }
   user.password = req.body.newPassword;
   user.passwordConfirm = req.body.newPasswordConfirm;
   await user.save();

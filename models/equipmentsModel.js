@@ -5,6 +5,11 @@ const equipmentSchema = new mongoose.Schema({
     type: String,
     required: [true, "please provide title"],
   },
+  category: { 
+    type: String, 
+    required: [true, "please provide category"],
+    enum: ["Aerial Lifts", "Air Compressors","Cabin","Cranes","Dump truck","Earth Moving","Material Handling","Motors"], 
+  },
   description: {
     type: String,
     required: [true, "please provide description"],
@@ -16,14 +21,11 @@ const equipmentSchema = new mongoose.Schema({
   type: {
     type: String,
     required: [true, "please provide  type"],
+    enum:["rent","buy"]
   },
   price: {
     type: Number,
     required: [true, "please provide  price"],
-  },
-  rating: {
-    type: Number,
-    required: [true, "please provide rating"],
   },
   createdAt: {
     type: Date,
