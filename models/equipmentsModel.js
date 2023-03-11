@@ -18,10 +18,9 @@ const equipmentSchema = new mongoose.Schema({
     type: String,
     required: [true, "please provide photo"],
   },
-  type: {
+  government: {
     type: String,
-    required: [true, "please provide  type"],
-    enum:["rent","buy"]
+    required: [true, "please provide  government"],
   },
   price: {
     type: Number,

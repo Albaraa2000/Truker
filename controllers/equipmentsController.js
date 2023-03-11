@@ -18,7 +18,7 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
     photo: result.secure_url,
     price: req.body.price,
     category: req.body.category,
-    type: req.body.type,
+    government: req.body.government,
     userId: req.user._id,
   });
 
