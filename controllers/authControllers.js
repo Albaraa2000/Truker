@@ -144,7 +144,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  console.log(user.email);
+
   if (!user) {
     return next(new AppError("Token has expired"), 400);
   }
@@ -170,9 +170,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
     return next(new AppError("Your Cuurent Password is wrong", 401)); //401
   }
-  // if (req.body.newPassword != req.body.newPasswordConfirm) {
-  //   return next(new AppError("Passwords do not match", 401)); //401
-  // }
+
   user.password = req.body.newPassword;
   user.passwordConfirm = req.body.newPasswordConfirm;
   await user.save();
