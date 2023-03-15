@@ -19,7 +19,8 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
     price: req.body.price,
     category: req.body.category,
     government: req.body.government,
-    userId: req.user._id,
+    // userId: req.user._id,
+    location: { coordinates: req.body.location }
   });
 
   res.status(201).json({
@@ -96,3 +97,15 @@ exports.updateEquipment = catchAsync(async (req, res, next) => {
     Equipment,
   });
 });
+// exports.saveLocation = catchAsync(async (req, res, next) => {
+//   const { location } = req.body;
+
+//   // Find the equipment document by user ID and update its location field
+//   const equipment = await equipments.findOneAndUpdate(
+//     { userId: "64034544841715002e86fdf1" },
+//     { location: { coordinates: location } },
+//     { new: true }
+//   );
+
+//   res.status(200).json({ success: true, equipment });
+// });

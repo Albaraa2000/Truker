@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide a valid password"],
+    // validate: [validator.isStrongPassword, "Please provide Strong Password"],
     minlength: 8,
     select: false,
   },
@@ -50,9 +51,29 @@ const userSchema = new mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
+  location: {
+    type: {
+      type: String,
+      default: "Point",
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
+  verified: {
+    type: Boolean,
+    default: false,
+  },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
+  otp: String,
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

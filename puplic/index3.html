@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Map</title>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPm9RM_Cz-f9mF5Z9uhSE5HM3FL7rSV34"
+      defer
+    ></script>
+    <style>
+      #map {
+        height: 400px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      let longitude = 0,
+        latitude = 0;
+      async function fetchData() {
+        const response = await fetch(
+          "http://localhost:8080/api/v1/Equipments/6410a51c2de9640aa486a1ad"
+        );
+        const obj = await response.json();
+        latitude = obj.oneEquipment.location.coordinates[0];
+        longitude = obj.oneEquipment.location.coordinates[1];
+        console.log(longitude, latitude);
+        initMap();
+      }
+      fetchData();
+      function initMap() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const coordinates = { lat: latitude, lng: longitude };
+            const map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 10,
+              center: coordinates,
+            });
+            const marker = new google.maps.Marker({
+              position: coordinates,
+              map: map,
+            });
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

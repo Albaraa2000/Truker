@@ -26,6 +26,16 @@ const equipmentSchema = new mongoose.Schema({
     type: Number,
     required: [true, "please provide  price"],
   },
+  location: {
+    type: {
+      type: String,
+      default: "Point"
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
@@ -33,6 +43,8 @@ const equipmentSchema = new mongoose.Schema({
   },
   userId: String,
 });
+
+equipmentSchema.index({ location: '2dsphere' });
 
 const Equipment = mongoose.model("Equipment", equipmentSchema);
 

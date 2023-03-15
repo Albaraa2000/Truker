@@ -5,7 +5,17 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
 const crypto = require("crypto");
-
+const otpGenerator = require('otp-generator');
+const otpGen = () => {
+  // Generate a 6-digit OTP with a 30 second interval
+  const secret = otpGenerator.generate(6, {
+    digits: true,
+    alphabets: false,
+    upperCase: false,
+    specialChars: false,
+  });
+  return secret;
+};
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -28,8 +38,39 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     avatar: req.body.avatar,
+    location: { coordinates: req.body.location }
   });
+  const otp = otpGen();
+  newUser.otp = otp;
+  await newUser.save({ validateBeforeSave: false });
+  const message = `Your otp is ${otp} (valid for 30 second)`;
+  try {
+    await sendEmail({
+      email: newUser.email,
+      subject: `otp`,
+      message,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+  req.newUser = newUser;
   createSendToken(newUser,201,res);
+});
+
+module.exports.verfiy = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  const otpCode = req.body.otpCode;
+
+  if (user.otp === otpCode) {
+    user.otp = undefined;
+    user.verified = true;
+    await user.save({ validateBeforeSave: false });
+    res.status(200).json({
+      message: 'done',
+    });
+  } else {
+    return next(new AppError('verfication failed'), 404);
+  }
 });
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
