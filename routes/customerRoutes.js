@@ -14,7 +14,7 @@ router.post('/contact',contactUs.contactUS)
 router.patch('/resetPassword/:token',authController.resetPassword)
 router.patch('/updatePassword',authController.protect,authController.updatePassword)
 router.patch('/updateMe', authController.protect, customerControllers.updateMe);
-router.delete('/delete', authController.protect, customerControllers.deleteMe);
+router.delete('/deleteMe', authController.protect, customerControllers.deleteMe);
 
 router
   .route('/')
