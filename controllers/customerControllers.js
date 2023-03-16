@@ -38,12 +38,12 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  const deleteUser = await User.findByIdAndUpdate(req.user.id, {
-    active: false,
-  });
+  const user = await User.findByIdAndDelete(req.user._id);
+  console.log(user);
+
   res.status(204).json({
-    status: "succes",
-  });
+    status:"done"
+  })
 });
 exports.getUser = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id);

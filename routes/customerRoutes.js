@@ -8,13 +8,13 @@ const contactUs= require('../utils/contactUs');
 
 router.post('/login',authController.login)
 router.post('/signup',authController.signup)
+router.post('/verfiy', authController.protect,authController.verfiy);
 router.post('/forgotPassword',authController.forgotPassword)
 router.post('/contact',contactUs.contactUS)
 router.patch('/resetPassword/:token',authController.resetPassword)
 router.patch('/updatePassword',authController.protect,authController.updatePassword)
 router.patch('/updateMe', authController.protect, customerControllers.updateMe);
-router.delete('/deleteMe', authController.protect, customerControllers.deleteMe);
-router.post('/verfiy', authController.protect,authController.verfiy);
+router.delete('/delete', authController.protect, customerControllers.deleteMe);
 
 router
   .route('/')
