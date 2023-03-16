@@ -3,20 +3,18 @@ const morgan = require("morgan");
 
 const AppError = require("./utils/appError");
 const errControllers = require("./controllers/errControllers");
+const apiKeyMiddleware = require("./controllers/apiKeyMiddleware");
 const customerRouter = require("./routes/customerRoutes");
 const equipmentsRouter = require("./routes/equipmentsRoutes");
+const limiter = require("./utils/rateLimit");
+
 const app = express();
 
 app.use(morgan("dev"));
 
 app.use(express.json());
 // app.use(express.static(`${__dirname}/public`));
-// app.use((req, res, next) => {ذ
-//   req.requestTime = new Date().toISOString();
-//   console.log(req.headers);
-//   next();
-// })
-
+app.use(limiter.limiter);
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -30,6 +28,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+// app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
 app.use("/api/v1/Equipments", equipmentsRouter);
 

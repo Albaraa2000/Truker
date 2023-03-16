@@ -66,7 +66,7 @@ module.exports.verfiy = catchAsync(async (req, res, next) => {
     user.verified = true;
     await user.save({ validateBeforeSave: false });
     res.status(200).json({
-      message: 'done',
+      message: 'verfied',
     });
   } else {
     return next(new AppError('verfication failed'), 404);
