@@ -14,7 +14,7 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 // app.use(express.static(`${__dirname}/public`));
-app.use(limiter.limiter);
+// app.use(limiter.limiter);
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
