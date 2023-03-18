@@ -5,7 +5,7 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
 const crypto = require("crypto");
-const otpGenerator = require('otp-generator');
+const otpGenerator = require("otp-generator");
 const otpGen = () => {
   // Generate a 6-digit OTP with a 30 second interval
   const secret = otpGenerator.generate(6, {
@@ -21,14 +21,14 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-const createSendToken = (user,statusCode,res) => {
+const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   res.status(statusCode).json({
     status: "success",
     token,
+    user,
   });
 };
-
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
@@ -37,8 +37,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    avatar: req.body.avatar,
-    location: { coordinates: req.body.location }
+    location: { coordinates: req.body.location },
   });
   const otp = otpGen();
   newUser.otp = otp;
@@ -54,7 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     console.log(err);
   }
   req.newUser = newUser;
-  createSendToken(newUser,201,res);
+  createSendToken(newUser, 201, res);
 });
 
 module.exports.verfiy = catchAsync(async (req, res, next) => {
@@ -66,10 +65,10 @@ module.exports.verfiy = catchAsync(async (req, res, next) => {
     user.verified = true;
     await user.save({ validateBeforeSave: false });
     res.status(200).json({
-      message: 'verfied',
+      message: "verfied",
     });
   } else {
-    return next(new AppError('verfication failed'), 404);
+    return next(new AppError("verfication failed"), 404);
   }
 });
 exports.login = catchAsync(async (req, res, next) => {
@@ -93,7 +92,6 @@ exports.login = catchAsync(async (req, res, next) => {
     id: user._id,
     token,
   });
- 
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -199,9 +197,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-
   createSendToken(user, 200, res);
-
 });
 exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.user.email }).select(
@@ -217,5 +213,4 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   createSendToken(user, 200, res);
-
 });

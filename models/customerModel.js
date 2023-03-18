@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: "",
+    default: null,
   },
   role: {
     type: String,
@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema({
     },
     coordinates: {
       type: [Number],
-      required: true,
+      // required: true,
     },
   },
   verified: {

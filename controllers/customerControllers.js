@@ -1,10 +1,11 @@
 const User = require("../models/customerModel");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
+const cloudinary = require("./cloudinary");
 
 const filterObj = (obj, ...allowed) => {
   const newObj = {};
-  Object.keys(allowed).forEach((el) => {
+  Object.keys(obj).forEach((el) => {
     if (allowed.includes(el)) {
       newObj[el] = obj[el];
     }
@@ -13,8 +14,7 @@ const filterObj = (obj, ...allowed) => {
 };
 exports.getAllusers = catchAsync(async (req, res, next) => {
   const users = await User.find();
-  if (!users)
-    return next(new AppError(`there is no user with id ${req.params.id}`, 404));
+  if (!users) return next(new AppError(`there is no users`, 404));
   res.status(200).json({
     users,
   });
@@ -26,8 +26,22 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError(`this route is not for password update !!!`, 404));
   }
   // 2) Filtered out unwanted fields names that are not allowed to be updated
-
-  const filterBody = filterObj(req.body, "name", "email");
+  const filterBody = filterObj(
+    req.body,
+    "name",
+    "email",
+    "phone",
+    "avatar",
+    "active"
+  );
+  let result;
+  if (!req.user.avatar || filterBody.avatar) {
+    result = await cloudinary.uploader.upload(req.file.path, {
+      tags: "equipments",
+      folder: "users/",
+    });
+    filterBody.avatar = result.secure_url;
+  }
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
     new: true,
     runValidators: true,
@@ -40,8 +54,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 exports.deleteMe = catchAsync(async (req, res, next) => {
   const user = await User.findByIdAndDelete(req.user._id);
   res.status(204).json({
-    status:"done"
-  })
+    status: "done",
+  });
 });
 exports.getUser = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id);
