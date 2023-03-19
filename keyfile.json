@@ -1,0 +1,12 @@
+{
+    "type": "service_account",
+    "project_id": "truker",
+    "private_key_id": "77e87ad5645595463d02663525887bc718a55fcd",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCsJKXVPtRu/shg\n5a7tTj8cs7jnK1FErviFBNAFxL5FdVMfjI8lAeStY97359u9bHre6ap+jLe3h8d4\nt0CQXw5D4FbC8SeBu+RceNq95nlhNC/96Mj1WXPCN+XG2UMaAzQtLMvQoGn1oScp\nEk8uVlnUT9TE6fOh6FhyyQV1sOeZw0WUB+x7c6JWRkOxts3wfSC6U6MW2/fjUCVo\n/yfA8fbxvWryxnQrpnxXaNCnwhVd1AzmZz41Qq0Au4QKjSvzTrFY7lPdqJAaXWoW\nfulx8lP2Dvzoz6LcffdGTSKsXidgwJOPsGw3juqByYU3n66/1NDEDMVq/yxT+HbR\nhy4hBkyNAgMBAAECggEADC4Hob/xTe0vBlQZ/WZk5sX8ljalaGOs59SAV3glMkrr\n17adRjQNFwuS8h1wmcV8KBuGWa/hK9Yqker9YXmoS7sqyF5BulcuADD44SjWe78y\niheXaGys2RgVZO1oZwXFAlFCFn/TH3MIj0phWdj4QCJp3ojjGRiUcYKxpTMgH+vo\nPIvkkZrSBw8ZNYlISwgcdVT8Yb9U9CXB4wtZgj+fuWs0irz3eDf12WlDsHzSXwAw\njeP7WlxhvAp1cZqW77sASfrw4uOJeAUgcnWCaQgtuxXzQ58EcZTCbBtvMtZOUBTt\nVdHPrpuxdNh7LHG9YFj11uH7xNZFAgFj2jQ4JtDirQKBgQDn+aEFE/lAkRoYdgCA\nDuixivSctPlO3DccPr8KsnzfOGPDP5jMtm/TRkNWk+cl2ZGDwZqLyWsdHAgVdPa2\nPSoqBunOcC880c90EpJ+FtXwEp6XkWmI1EPSqpIvyAJJNs3vk8Lietzq2JuzZ0cU\nMzVnp5Q59Rp6VsE85dhhak5BXwKBgQC9+LC19ynMYjuOoMVirWLGcdE2Cqwhk2XF\n7rkZYTT/X/jgn2LAu6Kky6ITdZm+HXyVgYUF/Mco9k03CqCIdu7PXjS5qfVp1TEh\nYGZFV8QSAA3ww/pG0/0xbIkGFubRf/LkwddC7+hgBkNnpxxFaeDSZtiSJo6iZ77T\nQYcHurEdkwKBgQDdeDVjrLsWCrJYUiiOGi3Me3aoOhufT52J6Nnps5iGYMbWPNx7\n7V173yQg/1n6h+pmWStcc/NAumd5XM7CFEkyEKGeBvsCXOlrzuNvYAvmhVBGMn0I\nNmd+NH0XAyQzlBAuv+qa4WQTDrQwJtT0kyNUj+hzIO+jhzo8EtBvyNdnjwKBgQCG\nWrIvn4RyRi806kNvTI0FKE38WIPwoxxhZjqG1pby3d9YjaD8Cjg3MMWJ2axIJvaL\njjSUTXhVYgyuFtf+a47uHgRQIwGsPdknb9QkyrOiv2Mcmp4RJbB2Gfq20c+g70rL\nusQRVTcVYpidYDTAaudUJuSYSKir94+gPUHQl5rX/QKBgQCfoLOyjs+hTZ1wU3MC\nKP19iXjVhyeEyZmV74scJCQifY9DvdO47yiCmpoH/mUhJneFGiESLxLHSbC5teeM\nNJPZYhEpnz1VorFl8LYbhCPWJg3yI5AMwEExyl/MTLuA+nZoAiciW6/SkBYcjqN8\n/r3GioVVUa2ZJAOU1jHwWci6Rw==\n-----END PRIVATE KEY-----\n",
+    "client_email": "truker-2023@truker.iam.gserviceaccount.com",
+    "client_id": "110548355832551361733",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/truker-2023%40truker.iam.gserviceaccount.com"
+  }

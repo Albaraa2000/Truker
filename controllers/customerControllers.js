@@ -2,7 +2,8 @@ const User = require("../models/customerModel");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
 const cloudinary = require("./cloudinary");
-
+const vision = require("@google-cloud/vision");
+const User_license = require("../models/User_license");
 const filterObj = (obj, ...allowed) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -64,4 +65,37 @@ exports.getUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     user,
   });
+});
+const client = new vision.ImageAnnotatorClient({
+  keyFilename: "./keyfile.json",
+});
+exports.getLicense = catchAsync(async (req, res, next) => {
+  const results = await cloudinary.uploader.upload(req.file.path, {
+    tags: "liscences",
+    folder: "liscences/",
+  });
+  imagePath = results.secure_url;
+  const [result] = await client.textDetection(imagePath);
+  const ocrResult = result.textAnnotations[0].description;
+
+  const ocrResultArray = ocrResult.split("\n");
+  const user = new User_license();
+  for (let i = 0; i < ocrResultArray.length; i++) {
+    if (ocrResultArray[i].startsWith("ادارة")) {
+      user.traffic_Department = ocrResultArray[i];
+    } else if (ocrResultArray[i].startsWith("رخصه")) {
+      user.license_Type = ocrResultArray[i];
+    } else if (ocrResultArray[i].startsWith("تاريخ")) {
+      user.release_Date = ocrResultArray[i].slice(-10);
+    } else if (ocrResultArray[i].includes("الترخيص")) {
+      user.license_End = ocrResultArray[i].slice(-10);
+    } else if (ocrResultArray[i].startsWith("وحدة")) {
+      user.traffic_Unit = ocrResultArray[i];
+    } else if (ocrResultArray[i].startsWith("2")) {
+      user.license_Number = ocrResultArray[i];
+    }
+  }
+  await user.save();
+  console.log(ocrResultArray);
+  res.status(200).json({ status: "success", ocrResult });
 });
