@@ -5,18 +5,7 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
 const crypto = require("crypto");
-const otpGenerator = require("otp-generator");
 
-const otpGen = () => {
-  // Generate a 6-digit OTP with a 30 second interval
-  const secret = otpGenerator.generate(6, {
-    digits: true,
-    alphabets: false,
-    upperCase: false,
-    specialChars: false,
-  });
-  return secret;
-};
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -30,7 +19,20 @@ const createSendToken = (user, statusCode, res) => {
     user,
   });
 };
-
+const sendOtp = async (user) => {
+  user.otp = user.createOTP();
+  await user.save({ validateBeforeSave: false });
+  const message = `Your otp is ${user.otp} valid for 10 minutes`;
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: `otp`,
+      message,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -40,36 +42,31 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     location: { coordinates: req.body.location },
   });
-  const otp = otpGen();
-  newUser.otp = otp;
-  await newUser.save({ validateBeforeSave: false });
-  const message = `Your otp is ${otp}`;
-  try {
-    await sendEmail({
-      email: newUser.email,
-      subject: `otp`,
-      message,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-
+  sendOtp(newUser);
   createSendToken(newUser, 201, res);
 });
 
 module.exports.verfiy = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   const otpCode = req.body.otpCode;
-
-  if (user.otp === otpCode) {
-    user.otp = undefined;
-    user.verified = true;
-    await user.save({ validateBeforeSave: false });
-    res.status(200).json({
-      message: "verfied",
-    });
+  if (user.otpExpires > Date.now()) {
+    if (user.otp === otpCode) {
+      user.otp = undefined;
+      user.verified = true;
+      await user.save({ validateBeforeSave: false });
+      res.status(200).json({
+        message: "verfied",
+      });
+    } else {
+      return next(new AppError("verfication failed"), 404);
+    }
   } else {
-    return next(new AppError("verfication failed"), 404);
+    return next(
+      new AppError(
+        "Your otp code has expired, please log in again to have new OTP"
+      ),
+      400
+    );
   }
 });
 exports.login = catchAsync(async (req, res, next) => {
@@ -84,6 +81,9 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     // instance method
     return next(new AppError("Incorrect email or password", 401)); //401
+  }
+  if (!user.verified && user.otpExpires < Date.now()) {
+    sendOtp(user);
   }
   //  3) If everything ok, send token to client
   const token = signToken(user._id);
@@ -150,7 +150,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // const resetURL = `${req.protocol}://${req.get(
   //   "host"
   // )}/api/v1/users/resetPassword/${resetToken}`;
-  const resetURL = `https://gradreact.pildextech.cf/ar/resetPassword/${resetToken}`
+  const resetURL = `https://gradreact.pildextech.cf/ar/resetPassword/${resetToken}`;
 
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
