@@ -11,9 +11,10 @@ const ocrResultSchema = new mongoose.Schema({
   license_Number: String,
   english_name: String,
   english_Nationality: String,
-  release_Date: String,
-  license_End: String,
+  release_Date: Date,
+  license_End: Date,
   type: String,
+  userId: String,
 });
 
 module.exports = mongoose.model("OCRResult", ocrResultSchema);

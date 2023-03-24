@@ -6,13 +6,22 @@ const errControllers = require("./controllers/errControllers");
 const apiKeyMiddleware = require("./controllers/apiKeyMiddleware");
 const customerRouter = require("./routes/customerRoutes");
 const equipmentsRouter = require("./routes/equipmentsRoutes");
+const helmet = require("helmet");
 const limiter = require("./utils/rateLimit");
+const mongo_sanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
 
 const app = express();
+app.use(helmet());
 
 app.use(morgan("dev"));
 
 app.use(express.json());
+app.use(mongo_sanitize());
+app.use(xss());
+app.use(hpp());
+
 // app.use(express.static(`${__dirname}/public`));
 // app.use(limiter.limiter);
 app.use(function (req, res, next) {
@@ -27,7 +36,6 @@ app.use(function (req, res, next) {
   );
   next();
 });
-
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
 app.use("/api/v1/Equipments", equipmentsRouter);

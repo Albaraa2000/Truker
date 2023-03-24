@@ -1,9 +1,10 @@
 const User = require("../models/customerModel");
+const User_license = require("../models/User_license");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
 const cloudinary = require("./cloudinary");
 const vision = require("@google-cloud/vision");
-const User_license = require("../models/User_license");
+
 const filterObj = (obj, ...allowed) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -13,6 +14,34 @@ const filterObj = (obj, ...allowed) => {
   });
   return newObj;
 };
+function convert(plain) {
+  let indians = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+  let converted = [];
+
+  for (i = 0; i < plain.length; i++) {
+    if (plain[i] == "-") {
+      converted.push("-");
+    } else {
+      for (j = 0; j < 10; j++) {
+        if (
+          plain[i].charCodeAt(0) == indians[j].charCodeAt(0) ||
+          plain[i].charCodeAt(0) - 144 == indians[j].charCodeAt(0)
+        ) {
+          converted.push(j);
+        }
+      }
+    }
+  }
+  const conv = converted.join("");
+  let dateParts = conv.split("-"); // split the date string into day, month, and year parts
+  let year = dateParts[2];
+  let month = dateParts[1];
+  let day = dateParts[0];
+
+  let outputDate = year + "-" + month + "-" + day; // concatenate year, month, and day parts into YYYY-MM-DD format
+
+  return outputDate; // output the converted date in YYYY-MM-DD format
+}
 exports.getAllusers = catchAsync(async (req, res, next) => {
   const users = await User.find();
   if (!users) return next(new AppError(`there is no users`, 404));
@@ -79,6 +108,7 @@ exports.getLicense = catchAsync(async (req, res, next) => {
   const ocrResult = result.textAnnotations[0].description;
 
   const ocrResultArray = ocrResult.split("\n");
+  console.log(ocrResultArray )
   const user = new User_license();
   for (let i = 0; i < ocrResultArray.length; i++) {
     if (ocrResultArray[i].startsWith("ادارة")) {
@@ -86,16 +116,22 @@ exports.getLicense = catchAsync(async (req, res, next) => {
     } else if (ocrResultArray[i].startsWith("رخصه")) {
       user.license_Type = ocrResultArray[i];
     } else if (ocrResultArray[i].startsWith("تاريخ")) {
-      user.release_Date = ocrResultArray[i].slice(-10);
+      converted_Date = convert(ocrResultArray[i].slice(-10));
+
+      user.release_Date = new Date(converted_Date);
     } else if (ocrResultArray[i].includes("الترخيص")) {
-      user.license_End = ocrResultArray[i].slice(-10);
+      console.log(ocrResultArray[i]);
+      convertedd_Date = convert(ocrResultArray[i].slice(-10));
+      console.log(convertedd_Date)
+      user.license_End = new Date(convertedd_Date);
     } else if (ocrResultArray[i].startsWith("وحدة")) {
       user.traffic_Unit = ocrResultArray[i];
     } else if (ocrResultArray[i].startsWith("2")) {
       user.license_Number = ocrResultArray[i];
     }
   }
+  user.userId = req.user._id;
   await user.save();
-  console.log(ocrResultArray);
+
   res.status(200).json({ status: "success", ocrResult });
 });

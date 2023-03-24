@@ -6,6 +6,7 @@ const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
 const crypto = require("crypto");
 const otpGenerator = require("otp-generator");
+
 const otpGen = () => {
   // Generate a 6-digit OTP with a 30 second interval
   const secret = otpGenerator.generate(6, {
@@ -42,7 +43,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const otp = otpGen();
   newUser.otp = otp;
   await newUser.save({ validateBeforeSave: false });
-  const message = `Your otp is ${otp} (valid for 30 second)`;
+  const message = `Your otp is ${otp}`;
   try {
     await sendEmail({
       email: newUser.email,
@@ -52,7 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-  req.newUser = newUser;
+
   createSendToken(newUser, 201, res);
 });
 
@@ -146,9 +147,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/users/resetPassword/${resetToken}`;
+  // const resetURL = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/api/v1/users/resetPassword/${resetToken}`;
+  const resetURL = `https://gradreact.pildextech.cf/ar/resetPassword/${resetToken}`
 
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
