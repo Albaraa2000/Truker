@@ -18,10 +18,10 @@ const equipmentSchema = new mongoose.Schema({
     type: String,
     required: [true, "please provide photo"],
   },
-  government: {
-    type: String,
-    required: [true, "please provide  government"],
-  },
+  // government: {
+  //   type: String,
+  //   required: [true, "please provide  government"],
+  // },
   price: {
     type: Number,
     required: [true, "please provide  price"],
@@ -33,7 +33,6 @@ const equipmentSchema = new mongoose.Schema({
     },
     coordinates: {
       type: [Number],
-      required: true
     }
   },
   createdAt: {
