@@ -190,9 +190,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("Token has expired"), 400);
   }
 
-  // if (user.email != req.body.email) {
-  //   return next(new AppError("Incorrect Email address"), 400);
-  // }
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
