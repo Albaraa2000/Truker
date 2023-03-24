@@ -22,7 +22,7 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
     category: req.body.category,
     government: req.body.government,
     // userId: req.user._id,
-    location: { coordinates: req.body.location },
+    // location: { coordinates: req.body.location },
   });
 
   res.status(201).json({

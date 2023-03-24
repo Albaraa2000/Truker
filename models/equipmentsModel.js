@@ -18,23 +18,23 @@ const equipmentSchema = new mongoose.Schema({
     type: String,
     required: [true, "please provide photo"],
   },
-  // government: {
-  //   type: String,
-  //   required: [true, "please provide  government"],
-  // },
+  government: {
+    type: String,
+    required: [true, "please provide  government"],
+  },
   price: {
     type: Number,
     required: [true, "please provide  price"],
   },
-  location: {
-    type: {
-      type: String,
-      default: "Point"
-    },
-    coordinates: {
-      type: [Number],
-    }
-  },
+  // location: {
+  //   type: {
+  //     type: String,
+  //     default: "Point"
+  //   },
+  //   coordinates: {
+  //     type: [Number],
+  //   }
+  // },
   createdAt: {
     type: Date,
     default: Date.now(),
