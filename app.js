@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 
 app.use(express.json());
-// app.use(mongo_sanitize());
+app.use(mongo_sanitize());
 app.use(xss());
 app.use(hpp());
 
