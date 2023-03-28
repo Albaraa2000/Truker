@@ -38,18 +38,18 @@ app.use(hpp());
 //   next();
 // });
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
-  res.header(
+  res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization,On-behalf-of, x-sg-elas-acl"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
+  res.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
-
 
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
