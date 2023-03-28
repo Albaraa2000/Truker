@@ -65,12 +65,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     "active"
   );
   let result;
-  if (!req.user.avatar || filterBody.avatar) {
+
+  if (!req.user.avatar || req.file) {
     result = await cloudinary.uploader.upload(req.file.path, {
       tags: "equipments",
       folder: "users/",
     });
     filterBody.avatar = result.secure_url;
+  } else {
+    filterBody.avatar = req.user.avatar;
   }
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
     new: true,
@@ -108,7 +111,7 @@ exports.getLicense = catchAsync(async (req, res, next) => {
   const ocrResult = result.textAnnotations[0].description;
 
   const ocrResultArray = ocrResult.split("\n");
-  console.log(ocrResultArray )
+  console.log(ocrResultArray);
   const user = new User_license();
   for (let i = 0; i < ocrResultArray.length; i++) {
     if (ocrResultArray[i].startsWith("ادارة")) {
@@ -122,7 +125,7 @@ exports.getLicense = catchAsync(async (req, res, next) => {
     } else if (ocrResultArray[i].includes("الترخيص")) {
       console.log(ocrResultArray[i]);
       convertedd_Date = convert(ocrResultArray[i].slice(-10));
-      console.log(convertedd_Date)
+      console.log(convertedd_Date);
       user.license_End = new Date(convertedd_Date);
     } else if (ocrResultArray[i].startsWith("وحدة")) {
       user.traffic_Unit = ocrResultArray[i];
