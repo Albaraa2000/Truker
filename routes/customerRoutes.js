@@ -16,7 +16,7 @@ router.patch(
   authController.protect,
   authController.updatePassword
 );
-router.patch(
+router.put(
   "/updateMe",
   authController.protect,
   upload.single("avatar"),
