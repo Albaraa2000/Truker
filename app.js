@@ -24,19 +24,32 @@ app.use(hpp());
 
 // app.use(express.static(`${__dirname}/public`));
 // app.use(limiter.limiter);
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "https://gradreact.pildextech.cf");
+//   res.header("Access-Control-Allow-Credentials", true);
+//   res.header(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+//   );
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//   );
+//   next();
+// });
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://gradreact.pildextech.cf");
-  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization,On-behalf-of, x-sg-elas-acl"
   );
   next();
 });
+
 
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
