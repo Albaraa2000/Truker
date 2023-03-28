@@ -56,19 +56,16 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError(`this route is not for password update !!!`, 404));
   }
   // 2) Filtered out unwanted fields names that are not allowed to be updated
-  const filterBody = filterObj(req.body, "name", "email", "phone", "active");
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
-    new: true,
-    runValidators: true,
-  });
-  res.status(200).json({
-    status: "succes",
-    updatedUser,
-  });
-});
-exports.updatePhoto = catchAsync(async (req, res, next) => {
-  const filterBody = filterObj(req.body, "avatar");
+  const filterBody = filterObj(
+    req.body,
+    "name",
+    "email",
+    "phone",
+    "avatar",
+    "active"
+  );
   let result;
+
   if (!req.user.avatar || req.file) {
     result = await cloudinary.uploader.upload(req.file.path, {
       tags: "equipments",
