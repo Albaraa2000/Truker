@@ -202,7 +202,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.user.email }).select(
     "+password"
   );
-
+    console.log(user)
   if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
     return next(new AppError("Your Cuurent Password is wrong", 401)); //401
   }
