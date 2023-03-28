@@ -23,10 +23,9 @@ app.use(xss());
 app.use(hpp());
 
 // app.use(express.static(`${__dirname}/public`));
-
+// app.use(limiter.limiter);
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-
   res.header("Access-Control-Allow-Origin", "https://gradreact.pildextech.cf");
   res.header(
     "Access-Control-Allow-Methods",
@@ -34,12 +33,10 @@ app.use(function (req, res, next) {
   );
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization,On-behalf-of, x-sg-elas-acl"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
-  res.header("Access-Control-Allow-Credentials", "true"); // Add this line
   next();
 });
-
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
 app.use("/api/v1/Equipments", equipmentsRouter);
