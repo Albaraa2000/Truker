@@ -6,6 +6,7 @@ exports.contactUS = catchAsync(async (req, res, next) => {
     email: process.env.EMAIL_USERNAME,
     subject: `${req.body.email}`,
     message: `this is ${req.body.name},${req.body.message}`,
+    html:`<h1>${req.body.message}</h1>`
   });
   res.status(200).json({
     status: "success",

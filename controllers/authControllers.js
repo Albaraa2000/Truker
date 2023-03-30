@@ -28,6 +28,7 @@ const sendOtp = async (user) => {
       email: user.email,
       subject: `otp`,
       message,
+      html: `<h1>${req.body.message}</h1>`,
     });
   } catch (err) {
     console.log(err);
@@ -159,6 +160,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       email: user.email,
       subject: "Your password reset token (valid for 10 min)",
       message,
+      html: `<h1>${req.body.message}</h1>`,
     });
 
     res.status(200).json({
@@ -202,7 +204,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.user.email }).select(
     "+password"
   );
-    console.log(user)
+  console.log(user);
   if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
     return next(new AppError("Your Cuurent Password is wrong", 401)); //401
   }
