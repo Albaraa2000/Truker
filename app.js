@@ -57,7 +57,6 @@ app.use("/api/v1/users", customerRouter);
 app.use("/api/v1/Equipments", equipmentsRouter);
 app.use("/", (req, res, next) => {
   res.render("index.ejs");
-  next();
 });
 // handle unhandled routes
 //firts goes to app error
