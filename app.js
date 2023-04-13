@@ -51,15 +51,14 @@ app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Credentials", true);
   next();
 });
+
+// app.use(apiKeyMiddleware);
+app.use("/api/v1/users", customerRouter);
+app.use("/api/v1/Equipments", equipmentsRouter);
 app.use("/", (req, res, next) => {
   res.render("index.ejs");
   next();
 });
-// app.use(apiKeyMiddleware);
-app.use("/api/v1/users", customerRouter);
-
-app.use("/api/v1/Equipments", equipmentsRouter);
-
 // handle unhandled routes
 //firts goes to app error
 app.all("*", (req, res, next) => {
