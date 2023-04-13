@@ -14,6 +14,7 @@ const hpp = require("hpp");
 
 const app = express();
 app.use(helmet());
+app.set("view engine", "ejs");
 
 app.use(morgan("dev"));
 
@@ -47,12 +48,16 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader("Access-Control-Allow-Credentials", true);
   next();
 });
-
+app.use("/", (req, res, next) => {
+  res.render("index.ejs");
+  next();
+});
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
+
 app.use("/api/v1/Equipments", equipmentsRouter);
 
 // handle unhandled routes
