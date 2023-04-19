@@ -19,9 +19,9 @@ app.set("view engine", "ejs");
 app.use(morgan("dev"));
 
 app.use(express.json());
-//app.use(mongo_sanitize());
-//app.use(xss());
-//app.use(hpp());
+app.use(mongo_sanitize());
+app.use(xss());
+app.use(hpp());
 
 // app.use(express.static(`${__dirname}/public`));
 // app.use(limiter.limiter);
