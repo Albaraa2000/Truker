@@ -39,7 +39,7 @@ app.use(express.static(`${__dirname}/public`));
 //   next();
 // });
 app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "https://react.pildextech.cf");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
