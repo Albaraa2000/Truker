@@ -36,6 +36,6 @@ router.post(
   customerControllers.getLicense
 );
 
-router.route("/").get(customerControllers.getAllusers);
-router.route("/:id").get(customerControllers.getUser);
+router.route("/").get( authController.protect,customerControllers.getAllusers);
+router.route("/:id").get( authController.protect,customerControllers.getUser);
 module.exports = router;
