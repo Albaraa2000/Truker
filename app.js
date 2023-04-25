@@ -23,7 +23,7 @@ app.use(mongo_sanitize());
 app.use(xss());
 app.use(hpp());
 
-// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(`${__dirname}/public`));
 // app.use(limiter.limiter);
 // app.use(function (req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "https://gradreact.pildextech.cf");
@@ -55,9 +55,10 @@ app.use(function (req, res, next) {
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
 app.use("/api/v1/Equipments", equipmentsRouter);
-app.use("/", (req, res, next) => {
-  res.render("index.ejs");
+app.get('/', (req, res) => {
+  res.render('index', { pageTitle: 'Home' });
 });
+
 // handle unhandled routes
 //firts goes to app error
 app.all("*", (req, res, next) => {
