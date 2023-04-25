@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
     required: [true, "please tell us your phone number"],
+    unique: true,
     validate: {
       validator: function (v) {
         return validator.isMobilePhone(v, "ar-EG");
@@ -49,19 +50,19 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "user","customer"],
-    default: "user",
+    enum: ["admin", "service_provider","customer"],
+    default: "customer",
   },
-  location: {
-    type: {
-      type: String,
-      default: "Point",
-    },
-    coordinates: {
-      type: [Number],
-      // required: true,
-    },
-  },
+  // location: {
+  //   type: {
+  //     type: String,
+  //     default: "Point",
+  //   },
+  //   coordinates: {
+  //     type: [Number],
+  //     // required: true,
+  //   },
+  // },
   verified: {
     type: Boolean,
     default: false,
@@ -71,11 +72,11 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
   otpExpires: String,
 
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
+  // active: {
+  //   type: Boolean,
+  //   default: true,
+  //   select: false,
+  // },
   otp: String,
 });
 userSchema.pre("save", async function (next) {

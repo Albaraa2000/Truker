@@ -28,7 +28,6 @@ const sendOtp = async (user) => {
       email: user.email,
       subject: `otp`,
       message,
-      html: `<h1>${req.body.message}</h1>`,
     });
   } catch (err) {
     console.log(err);
@@ -41,7 +40,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    location: { coordinates: req.body.location },
+    // location: { coordinates: req.body.location },
   });
   sendOtp(newUser);
   createSendToken(newUser, 201, res);
@@ -53,6 +52,7 @@ module.exports.verfiy = catchAsync(async (req, res, next) => {
   if (user.otpExpires > Date.now()) {
     if (user.otp === otpCode) {
       user.otp = undefined;
+      user.otpExpires=undefined;
       user.verified = true;
       await user.save({ validateBeforeSave: false });
       res.status(200).json({
@@ -83,9 +83,7 @@ exports.login = catchAsync(async (req, res, next) => {
     // instance method
     return next(new AppError("Incorrect email or password", 401)); //401
   }
-  if (!user.verified && user.otpExpires < Date.now()) {
-    sendOtp(user);
-  }
+
   //  3) If everything ok, send token to client
   const token = signToken(user._id);
   res.status(200).json({
@@ -94,6 +92,17 @@ exports.login = catchAsync(async (req, res, next) => {
     id: user._id,
     token,
   });
+});
+exports.sendOtpAgain = catchAsync(async (req, res, next) => {
+  if (req.user.verified != true) {
+    sendOtp(req.user);
+    res.status(200).json({
+      status: "success",
+      message: "otp sent to your mail",
+    });
+  } else {
+    return next(new AppError("account is activated already", 200));
+  }
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -159,7 +168,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await sendEmail({
       email: user.email,
       subject: "Your password reset token (valid for 10 min)",
-      message:message,
+      message: message,
     });
 
     res.status(200).json({

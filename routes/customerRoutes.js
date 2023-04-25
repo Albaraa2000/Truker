@@ -9,7 +9,9 @@ router.post("/login", authController.login);
 router.post("/signup", authController.signup);
 router.post("/verfiy", authController.protect, authController.verfiy);
 router.post("/forgotPassword", authController.forgotPassword);
+router.post("/sendOtpAgain", authController.protect,authController.sendOtpAgain);
 router.post("/contact", contactUs.contactUS);
+
 router.patch("/resetPassword/:token", authController.resetPassword);
 router.patch(
   "/updatePassword",
