@@ -14,7 +14,7 @@ router
   .route("/")
   .post(
     authController.protect,
-    // authController.restrictTo("admin"),
+    authController.restrictTo("service_provider"),
     upload.single("photo"),
     equipmentsController.createEquipments
   )
