@@ -92,6 +92,7 @@ exports.login = catchAsync(async (req, res, next) => {
     message: "Signed in successfully",
     id: user._id,
     token,
+    user
   });
 });
 exports.sendOtpAgain = catchAsync(async (req, res, next) => {
