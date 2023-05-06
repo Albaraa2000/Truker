@@ -2,7 +2,8 @@ const User = require("../models/customerModel");
 const User_license = require("../models/User_license");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
-const cloudinary = require("./cloudinary");
+const cloudinary = require(`${__dirname}/../utils/cloudinary.js`);
+// const cloudinary = require("./cloudinary");
 const vision = require("@google-cloud/vision");
 
 const filterObj = (obj, ...allowed) => {

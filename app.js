@@ -3,9 +3,16 @@ const morgan = require("morgan");
 
 const AppError = require("./utils/appError");
 const errControllers = require("./controllers/errControllers");
-const apiKeyMiddleware = require("./controllers/apiKeyMiddleware");
+const apiKeyMiddleware = require("./utils/apiKeyMiddleware");
 const customerRouter = require("./routes/customerRoutes");
 const equipmentsRouter = require("./routes/equipmentsRoutes");
+const brandRouter = require("./routes/brandRoutes");
+const categoryRouter = require("./routes/categoryRoutes");
+const couponRouter = require("./routes/couponRoutes");
+const favoriteListRouter = require("./routes/favoriteListRoutes");
+const reviewRouter = require("./routes/reviewRoutes");
+const subcategoryRouter = require("./routes/subcategoryRoutes");
+const truckRouter = require("./routes/truckRoutes");
 const helmet = require("helmet");
 const limiter = require("./utils/rateLimit");
 const mongo_sanitize = require("express-mongo-sanitize");
@@ -55,6 +62,12 @@ app.use(function (req, res, next) {
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
 app.use("/api/v1/Equipments", equipmentsRouter);
+app.use("/api/v1/brand", brandRouter);
+app.use("/api/v1/category", categoryRouter);
+app.use("/api/v1/coupon", couponRouter);
+app.use("/api/v1/review", reviewRouter);
+app.use("/api/v1/subcategory", subcategoryRouter);
+app.use("/api/v1/truck", truckRouter);
 app.get('/', (req, res) => {
   res.render('index', { pageTitle: 'Home' });
 });

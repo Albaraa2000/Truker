@@ -3,7 +3,7 @@ const router = express.Router();
 const customerControllers = require("../controllers/customerControllers");
 const authController = require("../controllers/authControllers");
 const contactUs = require("../utils/contactUs");
-const upload = require("../controllers/multer");
+const upload = require("../utils/multer");
 
 router.post("/login", authController.login);
 router.post("/signup", authController.signup);

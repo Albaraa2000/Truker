@@ -96,6 +96,7 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 exports.sendOtpAgain = catchAsync(async (req, res, next) => {
+  console.log(req.user)
   if (req.user.verified != true) {
     sendOtp(req.user);
     res.status(200).json({

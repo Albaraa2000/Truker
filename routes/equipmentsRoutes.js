@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const equipmentsController = require("../controllers/equipmentsController");
 const authController = require("../controllers/authControllers");
-const apiKeyMiddleware = require("../controllers/apiKeyMiddleware");
-const upload = require("../controllers/multer");
+const apiKeyMiddleware = require("../utils/apiKeyMiddleware");
+const upload = require("../utils/multer");
 
 // router
 //   .route("/location")

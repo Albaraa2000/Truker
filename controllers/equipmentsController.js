@@ -3,7 +3,7 @@ const APIFeatures = require(`${__dirname}/../utils/apiFeaturs`);
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
 
-const cloudinary = require("./cloudinary");
+const cloudinary = require("../utils/cloudinary");
 
 exports.createEquipments = catchAsync(async (req, res, next) => {
   // Use Cloudinary SDK to upload the image
