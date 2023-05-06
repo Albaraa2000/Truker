@@ -4,12 +4,21 @@ const slugify = require("slugify");
 const catchAsync = require("./../utils/catchAsync");
 
 const appError = require("./../utils/appError");
-// const asyncHandler = require("express-async-handler");
+const cloudinary = require("../utils/cloudinary");
 
 // to add a new category
 exports.createCategory = catchAsync(async (req, res, next) => {
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    tags: "Category",
+    folder: "tools/",
+  });
   const { name } = req.body;
-  let category = new CategoryModel({ name, slug: slugify(name) });
+
+  let category = new CategoryModel({
+    name,
+    image: result.secure_url,
+    slug: slugify(name),
+  });
   await category.save();
   !category && next(new appError("category not found", 400));
   category && res.status(200).json(category);

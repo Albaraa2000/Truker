@@ -1,15 +1,19 @@
 const truckModel = require("../models/truckModel.js");
-
 const slugify = require("slugify");
 const catchAsync = require("./../utils/catchAsync");
 const appError = require("./../utils/appError");
 const APIFeatures = require(`${__dirname}/../utils/apiFeaturs`);
-
-// const asyncHandler = require("express-async-handler");
+const cloudinary = require("../utils/cloudinary");
 
 // to add a new truck
 exports.createTruck = catchAsync(async (req, res, next) => {
-  req.body.slug = slugify(req.body.name);
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    tags: "equipments",
+    folder: "truks/",
+  });
+  req.body.imageCover = result.secure_url;
+
+  req.body.slug = slugify(req.body.name,req.body.imageCover);
   let truck = new truckModel(req.body);
   await truck.save();
   !truck && next(new appError(" not create truck", 400));

@@ -11,9 +11,9 @@ exports.createEquipments = catchAsync(async (req, res, next) => {
   const result = await cloudinary.uploader.upload(req.file.path, {
     tags: "equipments",
     folder: "tools/",
-    // ocr: "adv_ocr",
+  
   });
-  // console.log(result.info.ocr);
+ 
   const newEquipment = await equipments.create({
     title: req.body.title,
     description: req.body.description,

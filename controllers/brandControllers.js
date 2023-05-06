@@ -2,12 +2,18 @@ const brandModel = require("../models/brandModel.js");
 const slugify = require("slugify");
 const catchAsync = require("./../utils/catchAsync");
 const appError = require("./../utils/appError");
+const cloudinary = require("../utils/cloudinary");
 
 // to add a new brand
 exports.createBrand = catchAsync(async (req, res, next) => {
   const { name } = req.body;
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    tags: "Category",
+    folder: "tools/",
+  });
   let brand = new brandModel({
     name,
+    image: result.secure_url,
     slug: slugify(name),
   });
   await brand.save();

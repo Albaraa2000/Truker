@@ -6,12 +6,12 @@ const {
   updateSubCategory,
   deleteSubCategory,
 } = require("./../controllers/subcategoryControllers");
-
+const upload = require("../utils/multer");
 const router = require("express").Router({ mergeParams: true });
 
 router
   .route("/")
-  .post(protect, restrictTo("admin"), createSubCategory)
+  .post(protect, restrictTo("admin"),upload.single("image"), createSubCategory)
   .get(getSubCategories);
 router
   .route("/:id")

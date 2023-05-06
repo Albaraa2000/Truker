@@ -8,10 +8,11 @@ const {
 const {restrictTo,protect} = require("../controllers/authControllers");
 
 const router = require("express").Router();
+const upload = require("../utils/multer");
 
 router
   .route("/")
-  .post(protect, restrictTo("admin"), createBrand)
+  .post(protect, restrictTo("admin"),upload.single("image"),  createBrand)
   .get(getBrands);
 router
   .route("/:id")

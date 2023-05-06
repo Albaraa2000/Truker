@@ -8,10 +8,11 @@ const {
 } = require("./../controllers/truckControllers");
 
 const router = require("express").Router();
+const upload = require("../utils/multer");
 
 router
   .route("/")
-  .post(protect, restrictTo("admin", "user"), createTruck)
+  .post(protect, restrictTo("admin", "user"), upload.single("imageCover"),createTruck)
   .get(getTrucks);
 router
   .route("/:id")

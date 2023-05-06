@@ -3,14 +3,20 @@ const subCategoryModel = require("../models/subcategoryModel.js");
 const slugify = require("slugify");
 const catchAsync = require("./../utils/catchAsync");
 const appError = require("./../utils/appError");
-
-// const asyncHandler = require("express-async-handler");
+const cloudinary = require("../utils/cloudinary");
 
 // to add a new subcategory
 exports.createSubCategory = catchAsync(async (req, res, next) => {
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    tags: "SubCategory",
+    folder: "tools/",
+  });
+  image = result.secure_url;
+
   const { name, category } = req.body;
   let subcategory = new subCategoryModel({
     name,
+    image,
     slug: slugify(name),
     category,
   });
