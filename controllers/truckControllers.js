@@ -22,7 +22,7 @@ exports.createTruck = catchAsync(async (req, res, next) => {
 // to get all trucks
 
 exports.getTrucks = catchAsync(async (req, res, next) => {
-  let apiFeatures = new ApiFeatures(truckModel.find(), req.query)
+  let apiFeatures = new APIFeatures(truckModel.find(), req.query)
     .paginate()
     .fields()
     .sort()

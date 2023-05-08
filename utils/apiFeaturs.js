@@ -1,50 +1,62 @@
-class APIFeatures {
-  constructor(query, queryString) {
-    // query =======> collection in database && queryString ======> req.query 
-    //const features = new APIFeatures(Tour, req.query)
-    this.query = query;
+class ApiFeatures {
+  constructor(mongooseQuery, queryString) {
+    this.mongooseQuery = mongooseQuery;
     this.queryString = queryString;
   }
-  filter() {
-    const queryObj = { ...this.queryString };
-    // console.log(queryObj); // ======> { sort: 'price,ratingsAverage', difficulty: 'easy' }
-    //i want to exclude them because they are not in the database
-    const excludedFields = ['page', 'limit', 'sort', 'fields'];
-    excludedFields.forEach((ele) => {
-      delete queryObj[ele]; // =====> queryObj['page']
-    });
-
-    //1B-advanced filtering
-    let queryStr = JSON.stringify(queryObj); //type : JSON && turned that to json(string) to use replace method
-    let reg = /\b(gt|gte|lt|lte)\b/g;
-    queryStr = queryStr.replace(reg, (match) => `$${match}`);
-    this.query = this.query.find(JSON.parse(queryStr));
+  paginate() {
+    let page = this.queryString.page * 1 || 1;
+    if (page < 1) page = 1;
+    let limit = 5;
+    let skip = (page - 1) * limit;
+    this.mongooseQuery.skip(skip).limit(limit);
+    this.page = page;
     return this;
   }
+
+  //////////// 2- filter /////////////////////////////
+  filter() {
+    let queryString = { ...this.queryString };
+    let excludedParams = ["page", "sort", "keyword", "limit"];
+    excludedParams.forEach((elm) => {
+      delete queryString[elm];
+    });
+    queryString = JSON.stringify(queryString);
+    queryString = queryString.replace(
+      /(gte|gt|lte|lt)/g,
+      (match) => `$${match}`
+    );
+    queryString = JSON.parse(queryString);
+    this.mongooseQuery.find(queryString);
+    return this;
+  }
+
   sort() {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(',').join(' '); //price,ratingsAverage ====> price ratingsAverage
-      this.query = this.query.sort(sortBy);
-    } else {
-      this.query = this.query.sort('-createdAt');
+      this.mongooseQuery.sort(this.queryString.sort);
     }
     return this;
   }
-  limitFields() {
+
+  search() {
+    if (this.queryString.keyword) {
+      let word = this.queryString.keyword;
+      this.mongooseQuery.find({
+        $or: [
+          { name: { $regex: word, $options: "i" } },
+          { description: { $regex: word, $options: "i" } },
+        ],
+      });
+    }
+    return this;
+  }
+  fields() {
     if (this.queryString.fields) {
-      const fields = this.queryString.fields.split(',').join(' '); // //price,ratingsAverage ====> price ratingsAverage
-      this.query = this.query.select(fields);
-    } else {
-      this.query = this.query.select('-__v');
+      let fields = this.queryString.fields.replace(/(,)/g, " ");
+      console.log(fields);
+      this.mongooseQuery.select(fields);
     }
-    return this;
-  }
-  paginate() {
-    const page = +this.queryString.page || 1; // page 1 1-10 page 2 11 - 20
-    const limit = +this.queryString.limit || 100;
-    const skip = (page - 1) * limit;
-    this.query = this.query.skip(skip).limit(limit);
     return this;
   }
 }
-module.exports = APIFeatures;
+module.exports = ApiFeatures;
+
