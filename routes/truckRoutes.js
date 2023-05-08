@@ -12,12 +12,12 @@ const upload = require("../utils/multer");
 
 router
   .route("/")
-  .post(protect, restrictTo("admin", "user"), upload.single("imageCover"),createTruck)
+  .post(protect, restrictTo("admin", "service_provider"), upload.single("imageCover"),createTruck)
   .get(getTrucks);
 router
   .route("/:id")
   .get(getTruck)
-  .put(protect, restrictTo("admin", "user"), updateTruck)
-  .delete(protect, restrictTo("admin", "user"), deleteTruck);
+  .put(protect, restrictTo("admin", "service_provider"), updateTruck)
+  .delete(protect, restrictTo("admin", "service_provider"), deleteTruck);
 
 module.exports = router;

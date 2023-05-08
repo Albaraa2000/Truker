@@ -34,6 +34,9 @@ const sendOtp = async (user) => {
   }
 };
 exports.signup = catchAsync(async (req, res, next) => {
+  if (req.body.role == "admin") {
+    return next(new AppError("you are not allowed to do this"), 500);
+  }
   const newUser = await User.create({
     name: req.body.name,
     phone: req.body.phone,
@@ -53,7 +56,7 @@ module.exports.verfiy = catchAsync(async (req, res, next) => {
   if (user.otpExpires > Date.now()) {
     if (user.otp === otpCode) {
       user.otp = undefined;
-      user.otpExpires=undefined;
+      user.otpExpires = undefined;
       user.verified = true;
       await user.save({ validateBeforeSave: false });
       res.status(200).json({
@@ -92,11 +95,11 @@ exports.login = catchAsync(async (req, res, next) => {
     message: "Signed in successfully",
     id: user._id,
     token,
-    user
+    user,
   });
 });
 exports.sendOtpAgain = catchAsync(async (req, res, next) => {
-  console.log(req.user)
+  console.log(req.user);
   if (req.user.verified != true) {
     sendOtp(req.user);
     res.status(200).json({
