@@ -8,8 +8,8 @@ const cloudinary = require("../utils/cloudinary");
 exports.createBrand = catchAsync(async (req, res, next) => {
   const { name } = req.body;
   const result = await cloudinary.uploader.upload(req.file.path, {
-    tags: "Category",
-    folder: "tools/",
+    tags: "Brand",
+    folder: "Brand/",
   });
   let brand = new brandModel({
     name,

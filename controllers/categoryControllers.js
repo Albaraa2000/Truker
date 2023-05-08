@@ -10,7 +10,7 @@ const cloudinary = require("../utils/cloudinary");
 exports.createCategory = catchAsync(async (req, res, next) => {
   const result = await cloudinary.uploader.upload(req.file.path, {
     tags: "Category",
-    folder: "tools/",
+    folder: "Category/",
   });
   const { name } = req.body;
 
