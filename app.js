@@ -73,6 +73,7 @@ app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/coupon", couponRouter);
 app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/subcategory", subcategoryRouter);
+app.use("/api/v1/favoriteList", favoriteListRouter);
 app.use("/api/v1/truck", truckRouter);
 app.get('/', (req, res) => {
   res.render('index', { pageTitle: 'Home' });
