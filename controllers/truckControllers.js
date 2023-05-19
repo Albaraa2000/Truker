@@ -15,6 +15,7 @@ exports.createTruck = catchAsync(async (req, res, next) => {
 
   req.body.slug = slugify(req.body.name,req.body.imageCover);
   let truck = new truckModel(req.body);
+  truck.userId = req.user._id,
   await truck.save();
   !truck && next(new appError(" not create truck", 400));
   truck && res.status(200).json(truck);
