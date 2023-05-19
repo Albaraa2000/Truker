@@ -78,7 +78,7 @@ const userSchema = new mongoose.Schema({
   //   select: false,
   // },
   otp: String,
-  favoriteList: [{ type: Types.ObjectId, ref: "truck" }],
+  favoriteList: [{ type: mongoose.Types.ObjectId, ref: "truck" }],
 
 });
 userSchema.pre("save", async function (next) {

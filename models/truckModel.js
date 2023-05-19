@@ -58,6 +58,9 @@ const schema = Schema(
       type: Number,
       default: 0,
     },
+    userId: {
+      type:String
+    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
