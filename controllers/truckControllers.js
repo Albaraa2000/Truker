@@ -23,14 +23,14 @@ exports.createTruck = catchAsync(async (req, res, next) => {
 
 exports.getTrucks = catchAsync(async (req, res, next) => {
   let apiFeatures = new APIFeatures(truckModel.find(), req.query)
-    .paginate()
+    // .paginate()
     .fields()
     .sort()
     .search()
     .filter();
   let trucks = await apiFeatures.mongooseQuery;
   !trucks && next(new appError("category not found", 400));
-  trucks && res.status(200).json({ page: apiFeatures.page, trucks });
+  trucks && res.status(200).json({  trucks });
 });
 // to get specific truck
 
