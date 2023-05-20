@@ -13,10 +13,9 @@ exports.createTruck = catchAsync(async (req, res, next) => {
   });
   req.body.imageCover = result.secure_url;
 
-  req.body.slug = slugify(req.body.name,req.body.imageCover);
+  req.body.slug = slugify(req.body.name, req.body.imageCover);
   let truck = new truckModel(req.body);
-  truck.userId = req.user._id,
-  await truck.save();
+  (truck.userId = req.user._id), await truck.save();
   !truck && next(new appError(" not create truck", 400));
   truck && res.status(200).json(truck);
 });
@@ -29,10 +28,10 @@ exports.getTrucks = catchAsync(async (req, res, next) => {
     .sort()
     .search()
     .filter();
-    let trucks = await apiFeatures.mongooseQuery;
-    const results = trucks.length;
+  let trucks = await apiFeatures.mongooseQuery;
+  const results = trucks.length;
   !trucks && next(new appError("category not found", 400));
-  trucks && res.status(200).json({  results,trucks });
+  trucks && res.status(200).json({ results, trucks });
 });
 // to get specific truck
 
@@ -46,6 +45,15 @@ exports.getTruck = catchAsync(async (req, res, next) => {
 // to update specific truck
 exports.updateTruck = catchAsync(async (req, res, next) => {
   const { id } = req.params;
+  if (!req.user.imageCover || req.file) {
+    result = await cloudinary.uploader.upload(req.file.path, {
+      tags: "equipments",
+      folder: "truks/",
+    });
+    req.body.imageCover = result.secure_url;
+  } else {
+    req.body.imageCover = req.user.avatar;
+  }
   if (req.body.name) {
     req.body.slug = slugify(req.body.name);
   }

@@ -17,7 +17,7 @@ router
 router
   .route("/:id")
   .get(getTruck)
-  .patch(protect, restrictTo("admin", "service_provider"), updateTruck)
+  .patch(protect, restrictTo("admin", "service_provider"), upload.single("imageCover"),updateTruck)
   .delete(protect, restrictTo("admin", "service_provider"), deleteTruck);
 
 module.exports = router;
