@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "service_provider","customer"],
+    enum: ["admin", "service_provider", "customer"],
     default: "customer",
   },
   // location: {
@@ -78,8 +78,13 @@ const userSchema = new mongoose.Schema({
   //   select: false,
   // },
   otp: String,
+  nationalId: {
+    type: Number,
+  },
+  drivingLicense: {
+    type: Number,
+  },
   favoriteList: [{ type: mongoose.Types.ObjectId, ref: "truck" }],
-
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -126,7 +131,7 @@ userSchema.methods.createOTP = function () {
     specialChars: false,
   });
 
-  this.otpExpires = Date.now() +  10 * 60 *1000 ;
+  this.otpExpires = Date.now() + 10 * 60 * 1000;
   return secret;
 };
 userSchema.methods.createPasswordResetToken = function () {
