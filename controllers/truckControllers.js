@@ -29,9 +29,10 @@ exports.getTrucks = catchAsync(async (req, res, next) => {
     .sort()
     .search()
     .filter();
-  let trucks = await apiFeatures.mongooseQuery;
+    let trucks = await apiFeatures.mongooseQuery;
+    const results = trucks.length;
   !trucks && next(new appError("category not found", 400));
-  trucks && res.status(200).json({  trucks });
+  trucks && res.status(200).json({  results,trucks });
 });
 // to get specific truck
 

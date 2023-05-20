@@ -17,7 +17,7 @@ router
 router
   .route("/:id")
   .get(getTruck)
-  .put(protect, restrictTo("admin", "service_provider"), updateTruck)
+  .patch(protect, restrictTo("admin", "service_provider"), updateTruck)
   .delete(protect, restrictTo("admin", "service_provider"), deleteTruck);
 
 module.exports = router;
