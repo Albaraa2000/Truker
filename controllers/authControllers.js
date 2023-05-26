@@ -13,6 +13,13 @@ const signToken = (id) => {
 };
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  res.cookie('token', token, {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    // secure: true,
+    httpOnly: true,
+  });
   res.status(statusCode).json({
     status: "success",
     token,
@@ -90,6 +97,13 @@ exports.login = catchAsync(async (req, res, next) => {
 
   //  3) If everything ok, send token to client
   const token = signToken(user._id);
+  res.cookie('token', token, {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    // secure: true,
+    httpOnly: true,
+  });
   res.status(200).json({
     status: "success",
     message: "Signed in successfully",
