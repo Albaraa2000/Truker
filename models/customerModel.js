@@ -79,11 +79,11 @@ const userSchema = new mongoose.Schema({
   // },
   otp: String,
   nationalId: {
-    type: Number,
+    type: String,
     default:null,
   },
   drivingLicense: {
-    type: Number,
+    type: String,
     default:null,
   },
   favoriteList: [{ type: mongoose.Types.ObjectId, ref: "truck" }],
