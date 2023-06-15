@@ -3,6 +3,8 @@ const User_license = require("../models/User_license");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
 const cloudinary = require(`${__dirname}/../utils/cloudinary.js`);
+const axios = require("axios");
+
 // const cloudinary = require("./cloudinary");
 const vision = require("@google-cloud/vision");
 
@@ -138,4 +140,30 @@ exports.getLicense = catchAsync(async (req, res, next) => {
   await user.save();
 
   res.status(200).json({ status: "success", ocrResult });
+});
+exports.getLicense = catchAsync(async (req, res, next) => {
+  try {
+    const axiosConfig = {
+      headers: {
+        "Ocp-Apim-Subscription-Key": process.env.subscriptionKey,
+      },
+    };
+    const results = await cloudinary.uploader.upload(req.file.path, {
+      tags: "liscences",
+      folder: "liscences/",
+    });
+    imagePath = results.secure_url;
+    const data = {
+      url: imagePath,
+    };
+    const imageResult = await axios.post(process.env.endpoint, data, axiosConfig);
+    const ocrResult = imageResult.data.readResult.content;
+
+    res
+      .status(200)
+      .json({ status: "success", ocrResult, split: ocrResult.split("\n") });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ err });
+  }
 });

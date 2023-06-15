@@ -33,13 +33,14 @@ router.delete(
   authController.protect,
   customerControllers.deleteMe
 );
-router.post(
-  "/license",
-  authController.protect,
-  upload.single("image"),
-  customerControllers.getLicense
-);
+// router.post(
+//   "/license",
+//   authController.protect,
+//   upload.single("image"),
+//   customerControllers.getLicense
+// );
 
 router.route("/").get(customerControllers.getAllusers);
+router.route("/ocr").post(upload.single("image"),customerControllers.getLicense);
 router.route("/:id").get(customerControllers.getUser);
 module.exports = router;

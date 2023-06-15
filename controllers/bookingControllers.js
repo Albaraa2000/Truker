@@ -9,7 +9,6 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
     driverId: req.truck.userId,
     truckId: req.truck.id,
     companyId: req.user._id,
-    rentalPeriod: req.body.rentalPeriod,
     price: req.body.price,
     startLocation: { coordinates: req.body.startLocation },
     deliveryLocation: { coordinates: req.body.deliveryLocation },
