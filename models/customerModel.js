@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "service_provider", "customer"],
+    enum: ["service_provider", "customer"],
     default: "customer",
   },
   // location: {
@@ -87,6 +87,7 @@ const userSchema = new mongoose.Schema({
     default:null,
   },
   favoriteList: [{ type: mongoose.Types.ObjectId, ref: "truck" }],
+  transactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

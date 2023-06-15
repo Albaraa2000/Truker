@@ -41,6 +41,12 @@ exports.getTruck = catchAsync(async (req, res, next) => {
   !truck && next(new appError("category not found", 400));
   truck && res.status(200).json(truck);
 });
+exports.toBook = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  let truck = await truckModel.findById(id);
+  req.truck = truck;
+  next();
+});
 
 // to update specific truck
 exports.updateTruck = catchAsync(async (req, res, next) => {

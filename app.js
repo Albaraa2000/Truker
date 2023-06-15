@@ -3,11 +3,11 @@ const morgan = require("morgan");
 
 const errControllers = require("./controllers/errControllers");
 
-
 const AppError = require("./utils/appError");
 const limiter = require("./utils/rateLimit");
 const apiKeyMiddleware = require("./utils/apiKeyMiddleware");
 
+const bookingRouter = require("./routes/bookingRoutes");
 
 const customerRouter = require("./routes/customerRoutes");
 // const equipmentsRouter = require("./routes/equipmentsRoutes");
@@ -18,7 +18,6 @@ const favoriteListRouter = require("./routes/favoriteListRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
 const subcategoryRouter = require("./routes/subcategoryRoutes");
 const truckRouter = require("./routes/truckRoutes");
-
 
 const helmet = require("helmet");
 const mongo_sanitize = require("express-mongo-sanitize");
@@ -75,8 +74,9 @@ app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/subcategory", subcategoryRouter);
 app.use("/api/v1/favoriteList", favoriteListRouter);
 app.use("/api/v1/truck", truckRouter);
-app.get('/', (req, res) => {
-  res.render('index', { pageTitle: 'Home' });
+app.use("/api/v1/booking", bookingRouter);
+app.get("/", (req, res) => {
+  res.render("index", { pageTitle: "Home" });
 });
 
 // handle unhandled routes
