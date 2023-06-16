@@ -11,8 +11,8 @@ const bookingSchema = new mongoose.Schema({
   },
   truckId: { type: mongoose.Types.ObjectId, required: true },
 
-  rentalPeriod: { type: String, required: true },
   price: { type: String, required: true },
+  description:{ type: String, required: true },
   startLocation: {
     type: {
       type: String,
