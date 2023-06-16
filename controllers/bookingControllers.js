@@ -16,14 +16,14 @@ const generateCode = function () {
 };
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
-  const service_provider = await User.findById(req.session.data.userId);
+  const service_provider = await User.findById(req.query.userId);
 
   if (service_provider.available === false) {
     return next(new appError("driver is not available now", 404));
   } else {
     const ticket = await Booking.create({
-      service_providerId: req.session.data.userId,
-      truckId: req.session.data.id,
+      service_providerId: req.query.userId,
+      truckId: req.query.truckId,
       companyId: req.user._id,
       price: req.body.price,
       description: req.body.description,
