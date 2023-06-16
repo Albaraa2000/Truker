@@ -50,23 +50,21 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
   }
 });
 exports.confirmTicket = catchAsync(async (req, res, next) => {
-
   const service_provider = req.user;
-  const ticket = await Booking.findById(req.query.ticket)
+  const ticket = await Booking.findById(req.query.ticket);
   const companyId = ticket.companyId;
 
-  if (req.body.booked === true &&  ticket.booked === false) {
+  if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
     const code = generateCode();
     const company = await User.findById(companyId);
     service_provider.available = false;
     service_provider.acceptedTransactions.push(ticket);
     service_provider.currentTransactions.pop(ticket);
-    service_provider.bookCode = code;
-    
+    ticket.bookCode = code;
+    await ticket.save();
     company.acceptedTransactions.push(ticket);
     company.currentTransactions.pop(ticket);
-    company.bookCode = code;
 
     await service_provider.save({ validateBeforeSave: false });
     await company.save({ validateBeforeSave: false });
@@ -77,7 +75,30 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
     success: true,
   });
 });
-exports.confirmProcess = catchAsync(async (req, res, next) => {});
+exports.confirmProcess = catchAsync(async (req, res, next) => {
+  const ticket = await Booking.findById(req.query.ticket);
+  const code = req.body.code;
+  if (req.user.role === "service_provider") {
+    if (code === ticket.bookCode) {
+      ticket.customerCode = true;
+      await ticket.save();
+      res.status(200).json({
+        status: "success",
+        message: "تهانينا علي اكمالك المهمة بنجاح!",
+      });
+    }
+  // } else if (req.user.role === "customer") {
+  
+  //   if (code === ticket.bookCode) {
+  //     ticket.service_providerCode = true;
+  //     await ticket.save();
+  //     res.status(200).json({
+  //       status: "success",
+  //       message: "we will take payment from your account",
+  //     });
+  //   }
+  }
+});
 exports.getAllbooking = catchAsync(async (req, res, next) => {
   const booking = await Booking.find();
   results = booking.length;

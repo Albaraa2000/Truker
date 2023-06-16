@@ -17,6 +17,17 @@ const bookingSchema = new mongoose.Schema({
   },
   price: { type: String, required: true },
   description: { type: String, required: true },
+  bookCode:{
+    type: String,
+  },
+  // customerCode:{
+  //   type: Boolean,
+  //   default: false,
+  // },
+  service_providerCode:{
+    type: Boolean,
+    default: false,
+  },
   startLocation: {
     type: {
       type: String,

@@ -86,9 +86,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default:true,
   },
-  bookCode:{
-    type: String,
-  },
+ 
   favoriteList: [{ type: mongoose.Types.ObjectId, ref: "truck" }],
   doneTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
   currentTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],

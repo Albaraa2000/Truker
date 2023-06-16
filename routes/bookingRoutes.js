@@ -21,12 +21,19 @@ router
     authController.restrictTo("customer"),
     truckControllers.getTruck
   );
-  router
+router
   .route("/confirm")
   .post(
     authController.protect,
     authController.restrictTo("service_provider"),
     bookingController.confirmTicket
+  );
+router
+  .route("/confirmProccess")
+  .post(
+    authController.protect,
+    authController.restrictTo("service_provider","customer"),
+    bookingController.confirmProcess
   );
 //   .delete(authController.protect, bookingController.deleteEquipment)
 //   .patch(authController.protect, bookingController.updateEquipment);
