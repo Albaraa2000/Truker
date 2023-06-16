@@ -1,6 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
-
+const cors =require("cors");
 const errControllers = require("./controllers/errControllers");
 
 const AppError = require("./utils/appError");
@@ -50,19 +50,20 @@ app.use(express.static(`${__dirname}/public`));
 //   );
 //   next();
 // });
-app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+app.use(cors()) // Use this after the variable declaration
+
+app.use((req,res,next)=>
+{
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
   );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
-});
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next()
+})
 
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
