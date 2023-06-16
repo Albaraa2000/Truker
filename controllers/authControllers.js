@@ -51,6 +51,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     role: req.body.role,
+    nationalId:req.body.nationalId
     // location: { coordinates: req.body.location },
   });
   sendOtp(newUser);
