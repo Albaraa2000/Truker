@@ -53,11 +53,11 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
   const service_provider = req.user;
   const ticket = await Booking.findById(req.query.ticket);
   const companyId = ticket.companyId;
-
+  const company = await User.findById(companyId);
   if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
     const code = generateCode();
-    const company = await User.findById(companyId);
+    
     service_provider.available = false;
     service_provider.acceptedTransactions.push(ticket);
     service_provider.currentTransactions.pop(ticket);
@@ -72,8 +72,12 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
       success: true,
     });
   } else {
+    service_provider.available = true;
     service_provider.currentTransactions.pop(ticket);
+    company.currentTransactions.pop(ticket);
+
     await service_provider.save({ validateBeforeSave: false });
+    await company.save({ validateBeforeSave: false });
     res.status(200).json({
       status: "success",
       message: "تم رفض الطلب",
@@ -84,15 +88,21 @@ exports.confirmProcess = catchAsync(async (req, res, next) => {
   const ticket = await Booking.findById(req.query.ticket);
   const service_providerId = ticket.service_providerId;
   const service_provider = await User.findById(service_providerId);
-
+  const companyId = ticket.companyId;
+  const company = await User.findById(companyId);
   const code = req.body.code;
   if (req.user.role === "service_provider") {
     if (code === ticket.bookCode) {
       ticket.customerCode = true;
+      service_provider.available = true;
       service_provider.doneTransactions.push(ticket);
       service_provider.acceptedTransactions.pop(ticket);
+      company.doneTransactions.push(ticket);
+      company.acceptedTransactions.pop(ticket);
       await ticket.save();
       await service_provider.save({ validateBeforeSave: false });
+      await company.save({ validateBeforeSave: false });
+
       res.status(200).json({
         status: "success",
         message: "تهانينا علي اكمالك المهمة بنجاح!",
