@@ -68,35 +68,46 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
 
     await service_provider.save({ validateBeforeSave: false });
     await company.save({ validateBeforeSave: false });
+    res.status(201).json({
+      success: true,
+    });
   } else {
-    return next(new appError("Invalid booked transaction", 400));
+    service_provider.currentTransactions.pop(ticket);
+    await service_provider.save({ validateBeforeSave: false });
+    res.status(200).json({
+      status: "success",
+      message: "تم رفض الطلب",
+    });
   }
-  res.status(201).json({
-    success: true,
-  });
 });
 exports.confirmProcess = catchAsync(async (req, res, next) => {
   const ticket = await Booking.findById(req.query.ticket);
+  const service_providerId = ticket.service_providerId;
+  const service_provider = await User.findById(service_providerId);
+
   const code = req.body.code;
   if (req.user.role === "service_provider") {
     if (code === ticket.bookCode) {
       ticket.customerCode = true;
+      service_provider.doneTransactions.push(ticket);
+      service_provider.acceptedTransactions.pop(ticket);
       await ticket.save();
+      await service_provider.save({ validateBeforeSave: false });
       res.status(200).json({
         status: "success",
         message: "تهانينا علي اكمالك المهمة بنجاح!",
       });
     }
-  // } else if (req.user.role === "customer") {
-  
-  //   if (code === ticket.bookCode) {
-  //     ticket.service_providerCode = true;
-  //     await ticket.save();
-  //     res.status(200).json({
-  //       status: "success",
-  //       message: "we will take payment from your account",
-  //     });
-  //   }
+    // } else if (req.user.role === "customer") {
+
+    //   if (code === ticket.bookCode) {
+    //     ticket.service_providerCode = true;
+    //     await ticket.save();
+    //     res.status(200).json({
+    //       status: "success",
+    //       message: "we will take payment from your account",
+    //     });
+    //   }
   }
 });
 exports.getAllbooking = catchAsync(async (req, res, next) => {
