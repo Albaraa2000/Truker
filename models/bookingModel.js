@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-  driverId: {
+  service_providerId: {
     type: mongoose.Types.ObjectId,
     required: true,
   },
@@ -10,9 +10,13 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
   truckId: { type: mongoose.Types.ObjectId, required: true },
-
+  booked: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
   price: { type: String, required: true },
-  description:{ type: String, required: true },
+  description: { type: String, required: true },
   startLocation: {
     type: {
       type: String,

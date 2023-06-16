@@ -13,7 +13,7 @@ exports.createTruck = catchAsync(async (req, res, next) => {
   });
   req.body.imageCover = result.secure_url;
 
-  req.body.slug = slugify(req.body.name, req.body.imageCover);
+  // req.body.slug = slugify(req.body.name, req.body.imageCover);
   let truck = new truckModel(req.body);
   (truck.userId = req.user._id), await truck.save();
   !truck && next(new appError(" not create truck", 400));
@@ -39,14 +39,19 @@ exports.getTruck = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   let truck = await truckModel.findById(id);
   !truck && next(new appError("category not found", 400));
+  req.session.data = truck;
   truck && res.status(200).json(truck);
 });
-exports.toBook = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  let truck = await truckModel.findById(id);
-  req.truck = truck;
-  next();
-});
+// exports.toBook = catchAsync(async (req, res, next) => {
+//   const { id } = req.params;
+//   let truck = await truckModel.findById(id);
+//   req.truck = truck;
+//   // console.log(truck)
+//   req.session.data = truck;
+//   res.redirect('/api/v1/booking/book_truck');
+//   // console.log(req.session)
+  
+// });
 
 // to update specific truck
 exports.updateTruck = catchAsync(async (req, res, next) => {

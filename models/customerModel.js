@@ -82,12 +82,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     default:null,
   },
-  drivingLicense: {
+  available:{
+    type: Boolean,
+    default:true,
+  },
+  bookCode:{
     type: String,
-    default:null,
   },
   favoriteList: [{ type: mongoose.Types.ObjectId, ref: "truck" }],
-  transactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
+  doneTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
+  currentTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
+  acceptedTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

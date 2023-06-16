@@ -3,49 +3,88 @@ const User = require("../models/customerModel");
 
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
+const otpGenerator = require("otp-generator");
+
+const generateCode = function () {
+  const secret = otpGenerator.generate(6, {
+    digits: true,
+    alphabets: false,
+    upperCase: false,
+    specialChars: false,
+  });
+  return secret;
+};
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
-  const ticket = await Booking.create({
-    driverId: req.truck.userId,
-    truckId: req.truck.id,
-    companyId: req.user._id,
-    price: req.body.price,
-    description: req.body.description,
-    startLocation: { coordinates: req.body.startLocation },
-    deliveryLocation: { coordinates: req.body.deliveryLocation },
-  });
+  const service_provider = await User.findById(req.session.data.userId);
 
-  await User.findByIdAndUpdate(
-    req.truck.userId,
-    {
-      $addToSet: { transactions: ticket },
-    },
-    {
-      new: true,
-    }
-  );
-  await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      $addToSet: { transactions: ticket },
-    },
-    {
-      new: true,
-    }
-  );
+  if (service_provider.available === false) {
+    return next(new appError("driver is not available now", 404));
+  } else {
+    const ticket = await Booking.create({
+      service_providerId: req.session.data.userId,
+      truckId: req.session.data.id,
+      companyId: req.user._id,
+      price: req.body.price,
+      description: req.body.description,
+      startLocation: { coordinates: req.body.startLocation },
+      deliveryLocation: { coordinates: req.body.deliveryLocation },
+    });
+
+    service_provider.currentTransactions.push(ticket);
+    await service_provider.save({ validateBeforeSave: false });
+
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $addToSet: { currentTransactions: ticket },
+      },
+      {
+        new: true,
+      }
+    );
+    res.status(201).json({
+      status: "success",
+      ticket,
+    });
+  }
+});
+exports.confirmTicket = catchAsync(async (req, res, next) => {
+
+  const service_provider = req.user;
+  const ticket = await Booking.findById(req.query.ticket)
+  const companyId = ticket.companyId;
+
+  if (req.body.booked === true &&  ticket.booked === false) {
+    ticket.booked = true;
+    const code = generateCode();
+    const company = await User.findById(companyId);
+    service_provider.available = false;
+    service_provider.acceptedTransactions.push(ticket);
+    service_provider.currentTransactions.pop(ticket);
+    service_provider.bookCode = code;
+    
+    company.acceptedTransactions.push(ticket);
+    company.currentTransactions.pop(ticket);
+    company.bookCode = code;
+
+    await service_provider.save({ validateBeforeSave: false });
+    await company.save({ validateBeforeSave: false });
+  } else {
+    return next(new appError("Invalid booked transaction", 400));
+  }
   res.status(201).json({
-    status: "success",
-    ticket,
+    success: true,
   });
 });
-
+exports.confirmProcess = catchAsync(async (req, res, next) => {});
 exports.getAllbooking = catchAsync(async (req, res, next) => {
   const booking = await Booking.find();
   results = booking.length;
   if (results == 0) return next(new appError("there was no equipments", 404));
   res.status(200).json({
     results,
-    booking
+    booking,
   });
 });
 // exports.getEquipment = catchAsync(async (req, res, next) => {

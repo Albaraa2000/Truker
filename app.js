@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors =require("cors");
+const session = require('express-session');
 const errControllers = require("./controllers/errControllers");
 
 const AppError = require("./utils/appError");
@@ -37,20 +38,8 @@ app.use(hpp());
 
 app.use(express.static(`${__dirname}/public`));
 // app.use(limiter.limiter);
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "https://gradreact.pildextech.cf");
-//   res.header("Access-Control-Allow-Credentials", true);
-//   res.header(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-//   );
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//   );
-//   next();
-// });
-app.use(cors()) // Use this after the variable declaration
+
+app.use(cors()) 
 
 app.use((req,res,next)=>
 {
@@ -64,7 +53,11 @@ app.use((req,res,next)=>
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next()
 })
-
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
 // app.use(apiKeyMiddleware);
 app.use("/api/v1/users", customerRouter);
 // app.use("/api/v1/Equipments", equipmentsRouter);
