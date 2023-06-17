@@ -35,6 +35,11 @@ const schema = Schema(
       ref: "brand",
       required: [true, "truck brand required"],
     },
+    currentLocation:{
+      type:String,
+      default:null,
+      required: [true, "current location required"],
+    },
     // ratingAverage: {
     //   type: Number,
     //   min: [1, "ratingAverage must be greater than 1"],
