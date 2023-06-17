@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const customerControllers = require("../controllers/customerControllers");
 const authController = require("../controllers/authControllers");
-const contactUs = require("../utils/contactUs");
+// const contactUs = require("../utils/contactUs");
 const upload = require("../utils/multer");
 
 router.post("/login", authController.login);
@@ -14,7 +14,7 @@ router.post(
   authController.protect,
   authController.sendOtpAgain
 );
-router.post("/contact", contactUs.contactUS);
+// router.post("/contact", contactUs.contactUS);
 
 router.patch("/resetPassword/:token", authController.resetPassword);
 router.patch(

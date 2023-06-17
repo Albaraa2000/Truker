@@ -8,10 +8,10 @@ const schema = Schema(
       unique: [true, "truck name unique"],
       minlength: [2, "too short truck name"],
     },
-    // slug: {
-    //   type: String,
-    //   lowercase: true,
-    // },
+    slug: {
+      type: String,
+      lowercase: true,
+    },
     description: {
       type: String,
       required: [true, "truck description required"],
@@ -46,10 +46,6 @@ const schema = Schema(
     // },
     userId: {
       type: String,
-    },
-    available: {
-      type: Boolean,
-      default: true,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

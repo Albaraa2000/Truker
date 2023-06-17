@@ -17,7 +17,7 @@ router
 router
   .route("/:id")
   .get(getBrand)
-  .put(protect, restrictTo("admin"), updateBrand)
+  .patch(protect, restrictTo("admin"), updateBrand)
   .delete(protect, restrictTo("admin"), deleteBrand);
 
 module.exports = router;

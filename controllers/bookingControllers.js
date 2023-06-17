@@ -86,6 +86,7 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
 });
 exports.confirmProcess = catchAsync(async (req, res, next) => {
   const ticket = await Booking.findById(req.query.ticket);
+  console.log(ticket)
   const service_providerId = ticket.service_providerId;
   const service_provider = await User.findById(service_providerId);
   const companyId = ticket.companyId;
@@ -93,7 +94,7 @@ exports.confirmProcess = catchAsync(async (req, res, next) => {
   const code = req.body.code;
   if (req.user.role === "service_provider") {
     if (code === ticket.bookCode) {
-      ticket.customerCode = true;
+      ticket.service_provider= true;
       service_provider.available = true;
       service_provider.doneTransactions.push(ticket);
       service_provider.acceptedTransactions.pop(ticket);

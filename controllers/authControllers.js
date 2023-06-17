@@ -60,6 +60,9 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 module.exports.verfiy = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
+  if (user.verified === true) {
+    return next(new AppError("Your account has been verified already."));
+  }
   const otpCode = req.body.otpCode;
   if (user.otpExpires > Date.now()) {
     if (user.otp === otpCode) {
@@ -114,8 +117,7 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 exports.sendOtpAgain = catchAsync(async (req, res, next) => {
-  console.log(req.user);
-  if (req.user.verified != true) {
+  if (req.user.verified !== true) {
     sendOtp(req.user);
     res.status(200).json({
       status: "success",
