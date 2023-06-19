@@ -7,9 +7,13 @@ const schema = Schema(
       trim: true,
       minlength: [1, "too short review name"],
     },
-    customer: {
+    customerId: {
       type: Types.ObjectId,
-      ref: "customer",
+      ref: "user",
+    },
+    service_providerId: {
+      type: Types.ObjectId,
+      ref: "user",
     },
     truck: {
       type: Types.ObjectId,
@@ -24,6 +28,6 @@ const schema = Schema(
   { timestamps: true }
 );
 schema.pre(/^find/, function () {
-  this.populate("customer", "name");
+  this.populate("user", "name");
 });
 module.exports = model("review", schema);

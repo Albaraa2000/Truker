@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const customerControllers = require("../controllers/customerControllers");
+const userControllers = require("../controllers/userControllers");
 const authController = require("../controllers/authControllers");
 // const contactUs = require("../utils/contactUs");
 const upload = require("../utils/multer");
@@ -26,21 +26,21 @@ router.patch(
   "/updateMe",
   authController.protect,
   upload.single("avatar"),
-  customerControllers.updateMe
+  userControllers.updateMe
 );
 router.delete(
   "/deleteMe",
   authController.protect,
-  customerControllers.deleteMe
+  userControllers.deleteMe
 );
 // router.post(
 //   "/license",
 //   authController.protect,
 //   upload.single("image"),
-//   customerControllers.getLicense
+//   userControllers.getLicense
 // );
 
-router.route("/").get(customerControllers.getAllusers);
-router.route("/ocr").post(upload.single("image"),customerControllers.getLicense);
-router.route("/:id").get(customerControllers.getUser);
+router.route("/").get(userControllers.getAllusers);
+router.route("/ocr").post(upload.single("image"),userControllers.getLicense);
+router.route("/:id").get(userControllers.getUser);
 module.exports = router;

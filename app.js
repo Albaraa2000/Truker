@@ -10,7 +10,7 @@ const apiKeyMiddleware = require("./utils/apiKeyMiddleware");
 
 const bookingRouter = require("./routes/bookingRoutes");
 
-const customerRouter = require("./routes/customerRoutes");
+const userRouter = require("./routes/userRoutes");
 // const equipmentsRouter = require("./routes/equipmentsRoutes");
 const brandRouter = require("./routes/brandRoutes");
 const categoryRouter = require("./routes/categoryRoutes");
@@ -58,7 +58,7 @@ app.use(session({
   saveUninitialized: true
 }));
 // app.use(apiKeyMiddleware);
-app.use("/api/v1/users", customerRouter);
+app.use("/api/v1/users", userRouter);
 // app.use("/api/v1/Equipments", equipmentsRouter);
 app.use("/api/v1/brand", brandRouter);
 app.use("/api/v1/category", categoryRouter);

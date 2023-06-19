@@ -1,4 +1,4 @@
-const userModel = require("../models/customerModel.js");
+const userModel = require("../models/userModel.js");
 
 const catchAsync = require("./../utils/catchAsync");
 

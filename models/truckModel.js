@@ -49,7 +49,7 @@ const schema = Schema(
     //   type: Number,
     //   default: 0,
     // },
-    userId: {
+    service_providerId: {
       type: String,
     },
   },

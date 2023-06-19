@@ -5,7 +5,7 @@ const bookingSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     required: true,
   },
-  companyId: {
+  customerId: {
     type: mongoose.Types.ObjectId,
     required: true,
   },
@@ -20,10 +20,6 @@ const bookingSchema = new mongoose.Schema({
   bookCode:{
     type: String,
   },
-  // customerCode:{
-  //   type: Boolean,
-  //   default: false,
-  // },
   service_providerCode:{
     type: Boolean,
     default: false,

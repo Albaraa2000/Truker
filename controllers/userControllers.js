@@ -1,4 +1,4 @@
-const User = require("../models/customerModel");
+const User = require("../models/userModel");
 const User_license = require("../models/User_license");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);

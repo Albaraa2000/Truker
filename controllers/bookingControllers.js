@@ -1,5 +1,5 @@
 const Booking = require("../models/bookingModel.js");
-const User = require("../models/customerModel");
+const User = require("../models/userModel");
 
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
@@ -22,9 +22,9 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
     return next(new appError("driver is not available now", 404));
   } else {
     const ticket = await Booking.create({
-      service_providerId: req.query.userId,
+      service_providerId: req.query.service_providerId,
+      customerId: req.user._id,
       truckId: req.query.truckId,
-      companyId: req.user._id,
       price: req.body.price,
       description: req.body.description,
       startLocation: { coordinates: req.body.startLocation },
@@ -52,8 +52,8 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
 exports.confirmTicket = catchAsync(async (req, res, next) => {
   const service_provider = req.user;
   const ticket = await Booking.findById(req.query.ticket);
-  const companyId = ticket.companyId;
-  const company = await User.findById(companyId);
+  const customerId = ticket.customerId;
+  const customer = await User.findById(customerId);
   if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
     const code = generateCode();
@@ -63,21 +63,21 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
     service_provider.currentTransactions.pop(ticket);
     ticket.bookCode = code;
     await ticket.save();
-    company.acceptedTransactions.push(ticket);
-    company.currentTransactions.pop(ticket);
+    customer.acceptedTransactions.push(ticket);
+    customer.currentTransactions.pop(ticket);
 
     await service_provider.save({ validateBeforeSave: false });
-    await company.save({ validateBeforeSave: false });
+    await customer.save({ validateBeforeSave: false });
     res.status(201).json({
       success: true,
     });
   } else {
     service_provider.available = true;
     service_provider.currentTransactions.pop(ticket);
-    company.currentTransactions.pop(ticket);
+    customer.currentTransactions.pop(ticket);
 
     await service_provider.save({ validateBeforeSave: false });
-    await company.save({ validateBeforeSave: false });
+    await customer.save({ validateBeforeSave: false });
     res.status(200).json({
       status: "success",
       message: "تم رفض الطلب",
@@ -86,11 +86,10 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
 });
 exports.confirmProcess = catchAsync(async (req, res, next) => {
   const ticket = await Booking.findById(req.query.ticket);
-  console.log(ticket)
   const service_providerId = ticket.service_providerId;
   const service_provider = await User.findById(service_providerId);
-  const companyId = ticket.companyId;
-  const company = await User.findById(companyId);
+  const customerId = ticket.customerId;
+  const customer = await User.findById(customerId);
   const code = req.body.code;
   if (req.user.role === "service_provider") {
     if (code === ticket.bookCode) {
@@ -98,11 +97,11 @@ exports.confirmProcess = catchAsync(async (req, res, next) => {
       service_provider.available = true;
       service_provider.doneTransactions.push(ticket);
       service_provider.acceptedTransactions.pop(ticket);
-      company.doneTransactions.push(ticket);
-      company.acceptedTransactions.pop(ticket);
+      customer.doneTransactions.push(ticket);
+      customer.acceptedTransactions.pop(ticket);
       await ticket.save();
       await service_provider.save({ validateBeforeSave: false });
-      await company.save({ validateBeforeSave: false });
+      await customer.save({ validateBeforeSave: false });
 
       res.status(200).json({
         status: "success",

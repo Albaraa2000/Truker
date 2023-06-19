@@ -7,13 +7,16 @@ const appError = require("./../utils/appError");
 // to add a new review
 exports.createReview = catchAsync(async (req, res, next) => {
   const isReview = await reviewModel.findOne({
-    user: req.user._id,
+    customerId: req.user._id,
     truck: req.body.truck,
   });
   if (isReview) {
-    next(new appError(" you'r create review before", 400));
+    next(new appError("you created review before", 400));
   } else {
+    const service_provider = await User.findById(req.query.userId);
     let review = new reviewModel(req.body);
+    review.customerId = req.user._id;
+    review.service_providerId = service_provider._id;
     await review.save();
     !review && next(new appError(" not create review", 400));
     review && res.status(200).json(review);
