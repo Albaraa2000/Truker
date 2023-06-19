@@ -15,11 +15,11 @@ router
 
 router.route("/").get(bookingController.getAllbooking);
 router
-  .route("/getTruck/:id")
+  .route("/:id")
   .get(
     authController.protect,
-    authController.restrictTo("customer"),
-    truckControllers.getTruck
+    // authController.restrictTo("customer"),
+    bookingController.getTicket
   );
 router
   .route("/confirm")

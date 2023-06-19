@@ -130,18 +130,18 @@ exports.getAllbooking = catchAsync(async (req, res, next) => {
     booking,
   });
 });
-// exports.getEquipment = catchAsync(async (req, res, next) => {
-//   const oneEquipment = await equipments.findById(req.params.id);
+exports.getTicket = catchAsync(async (req, res, next) => {
+  const ticket = await Booking.findById(req.params.id);
 
-//   if (!oneEquipment)
-//     return next(
-//       new AppError(`there is no equipment with id ${req.params.id}`, 404)
-//     );
+  if (!ticket)
+    return next(
+      new appError(`there is no ticket with id ${req.params.id}`, 404)
+    );
 
-//   res.status(200).json({
-//     oneEquipment,
-//   });
-// });
+  res.status(200).json({
+    ticket,
+  });
+});
 // exports.deleteEquipment = catchAsync(async (req, res, next) => {
 //   const oneEquipment = await equipments.findById(req.params.id);
 //   if (!oneEquipment)
