@@ -16,7 +16,7 @@ router
 router
   .route("/:id")
   .get(getReview)
-  .put(protect, restrictTo("customer"), updateReview)
+  .patch(protect, restrictTo("customer"), updateReview)
   .delete(protect, restrictTo("admin", "customer"), deleteReview);
 
 module.exports = router;

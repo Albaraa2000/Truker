@@ -1,4 +1,5 @@
 const reviewModel = require("../models/reviewsModel.js");
+const User = require("../models/userModel.js");
 const catchAsync = require("./../utils/catchAsync");
 const appError = require("./../utils/appError");
 
@@ -13,11 +14,15 @@ exports.createReview = catchAsync(async (req, res, next) => {
   if (isReview) {
     next(new appError("you created review before", 400));
   } else {
-    const service_provider = await User.findById(req.query.userId);
+    const service_provider = await User.findById(req.query.service_providerId);
     let review = new reviewModel(req.body);
     review.customerId = req.user._id;
     review.service_providerId = service_provider._id;
+    service_provider.reviews.push(review);
+
+    await service_provider.save({validateBeforeSave: false });
     await review.save();
+
     !review && next(new appError(" not create review", 400));
     review && res.status(200).json(review);
   }

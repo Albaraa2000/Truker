@@ -16,7 +16,7 @@ const generateCode = function () {
 };
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
-  const service_provider = await User.findById(req.query.userId);
+  const service_provider = await User.findById(req.query.service_providerId);
 
   if (service_provider.available === false) {
     return next(new appError("driver is not available now", 404));

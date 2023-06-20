@@ -91,6 +91,7 @@ const userSchema = new mongoose.Schema({
   doneTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
   currentTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
   acceptedTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
+  reviews: [{ type: mongoose.Types.ObjectId, ref: "review" }],
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
