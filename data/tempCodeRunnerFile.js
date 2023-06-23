@@ -1,1 +1,1 @@
-@azure/cognitiveservices-computervision
+false

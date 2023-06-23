@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const otpGenerator = require("otp-generator");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -80,13 +79,13 @@ const userSchema = new mongoose.Schema({
   otp: String,
   nationalId: {
     type: String,
-    default:null,
+    default: null,
   },
-  available:{
+  available: {
     type: Boolean,
-    default:true,
+    default: true,
   },
- 
+
   favoriteList: [{ type: mongoose.Types.ObjectId, ref: "truck" }],
   doneTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
   currentTransactions: [{ type: mongoose.Types.ObjectId, ref: "booking" }],
@@ -131,13 +130,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 userSchema.methods.createOTP = function () {
-  const secret = otpGenerator.generate(6, {
-    digits: true,
-    alphabets: false,
-    upperCase: false,
-    specialChars: false,
-  });
-
+  const secret = Math.floor(100000 + Math.random() * 900000);
   this.otpExpires = Date.now() + 10 * 60 * 1000;
   return secret;
 };

@@ -56,12 +56,12 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
   const customer = await User.findById(customerId);
   if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
-    const code = generateCode();
+  
     
     service_provider.available = false;
     service_provider.acceptedTransactions.push(ticket);
     service_provider.currentTransactions.pop(ticket);
-    ticket.bookCode = code;
+    ticket.bookCode = customer.createOTP();
     await ticket.save();
     customer.acceptedTransactions.push(ticket);
     customer.currentTransactions.pop(ticket);
