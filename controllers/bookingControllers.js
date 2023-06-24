@@ -19,7 +19,7 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
   const service_provider = await User.findById(req.query.service_providerId);
 
   if (service_provider.available === false) {
-    return next(new appError("driver is not available now", 404));
+    return next(new appError("السائق غير متاح حاليا", 404));
   } else {
     const ticket = await Booking.create({
       service_providerId: req.query.service_providerId,
@@ -56,8 +56,7 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
   const customer = await User.findById(customerId);
   if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
-  
-    
+
     service_provider.available = false;
     service_provider.acceptedTransactions.push(ticket);
     service_provider.currentTransactions.pop(ticket);
@@ -93,7 +92,8 @@ exports.confirmProcess = catchAsync(async (req, res, next) => {
   const code = req.body.code;
   if (req.user.role === "service_provider") {
     if (code === ticket.bookCode) {
-      ticket.service_provider= true;
+      ticket.service_providerCode = true;
+      ticket.bookCode = undefined;
       service_provider.available = true;
       service_provider.doneTransactions.push(ticket);
       service_provider.acceptedTransactions.pop(ticket);
