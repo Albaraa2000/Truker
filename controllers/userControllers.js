@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Truck = require("../models/truckModel");
 const User_license = require("../models/User_license");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
@@ -60,12 +61,18 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.user._id);
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  if (user.role === "service_provider") {
+    await Truck.deleteMany({ service_providerId: req.user._id });
+  }
+  await user.remove();
   res.status(204).json({
     status: "done",
   });
 });
-
 
 exports.getLicense = catchAsync(async (req, res, next) => {
   try {

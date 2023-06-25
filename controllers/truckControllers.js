@@ -7,6 +7,7 @@ const cloudinary = require("../utils/cloudinary");
 
 // to add a new truck
 exports.createTruck = catchAsync(async (req, res, next) => {
+  if (!req.file.path) return next(new AppError("please choose photo", 404));
   const result = await cloudinary.uploader.upload(req.file.path, {
     tags: "equipments",
     folder: "truks/",
@@ -15,7 +16,7 @@ exports.createTruck = catchAsync(async (req, res, next) => {
 
   req.body.slug = slugify(req.body.name, req.body.imageCover);
   let truck = new truckModel(req.body);
-  truck.service_providerId= req.user._id 
+  truck.service_providerId = req.user._id;
   await truck.save();
   !truck && next(new AppError(" not create truck", 400));
   truck && res.status(201).json(truck);
