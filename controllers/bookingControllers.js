@@ -17,7 +17,9 @@ const generateCode = function () {
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
   const service_provider = await User.findById(req.query.service_providerId);
-
+  if (!service_provider) {
+    return next(new appError("user has been deleted", 404));
+  }
   if (service_provider.available === false) {
     return next(new appError("السائق غير متاح حاليا", 404));
   } else {
@@ -52,8 +54,14 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
 exports.confirmTicket = catchAsync(async (req, res, next) => {
   const service_provider = req.user;
   const ticket = await Booking.findById(req.query.ticket);
+  if (!ticket) {
+    return next(new appError("there was no ticket with this id ", 404));
+  }
   const customerId = ticket.customerId;
   const customer = await User.findById(customerId);
+  if (!customer) {
+    return next(new appError("user has been deleted", 404));
+  }
   if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
 
@@ -85,10 +93,19 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
 });
 exports.confirmProcess = catchAsync(async (req, res, next) => {
   const ticket = await Booking.findById(req.query.ticket);
+  if (!ticket) {
+    return next(new appError("there was no ticket with this id ", 404));
+  }
   const service_providerId = ticket.service_providerId;
   const service_provider = await User.findById(service_providerId);
+  if (!service_provider) {
+    return next(new appError("user has been deleted", 404));
+  }
   const customerId = ticket.customerId;
   const customer = await User.findById(customerId);
+  if (!customer) {
+    return next(new appError("user has been deleted", 404));
+  }
   const code = req.body.code;
   if (req.user.role === "service_provider") {
     if (code === ticket.bookCode) {
