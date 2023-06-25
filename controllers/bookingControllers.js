@@ -1,6 +1,6 @@
 const Booking = require("../models/bookingModel.js");
 const User = require("../models/userModel");
-
+const Truck = require("../models/truckModel");
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
 const otpGenerator = require("otp-generator");
@@ -20,6 +20,8 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
   if (!service_provider) {
     return next(new appError("user has been deleted", 404));
   }
+  const truck = await User.findById(req.query.truckId);
+  if (!truck) return next(new appError("truck has been deleted", 404));
   if (service_provider.available === false) {
     return next(new appError("السائق غير متاح حاليا", 404));
   } else {
