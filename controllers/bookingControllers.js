@@ -17,10 +17,11 @@ const generateCode = function () {
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
   const service_provider = await User.findById(req.query.service_providerId);
+  console.log(service_provider)
   if (!service_provider) {
     return next(new appError("user has been deleted", 404));
   }
-  const truck = await User.findById(req.query.truckId);
+  const truck = await Truck.findById(req.query.truckId);
   if (!truck) return next(new appError("truck has been deleted", 404));
   if (service_provider.available === false) {
     return next(new appError("السائق غير متاح حاليا", 404));
