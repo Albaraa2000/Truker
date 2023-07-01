@@ -5,7 +5,6 @@ const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
 const cloudinary = require(`${__dirname}/../utils/cloudinary.js`);
 const axios = require("axios");
-const { generate } = require("otp-generator");
 
 const filterObj = (obj, ...allowed) => {
   const newObj = {};

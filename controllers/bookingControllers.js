@@ -3,17 +3,8 @@ const User = require("../models/userModel");
 const Truck = require("../models/truckModel");
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
-const otpGenerator = require("otp-generator");
 
-const generateCode = function () {
-  const secret = otpGenerator.generate(6, {
-    digits: true,
-    alphabets: false,
-    upperCase: false,
-    specialChars: false,
-  });
-  return secret;
-};
+
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
   const service_provider = await User.findById(req.query.service_providerId);
