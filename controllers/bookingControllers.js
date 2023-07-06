@@ -3,13 +3,11 @@ const User = require("../models/userModel");
 const Truck = require("../models/truckModel");
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
-const { default: Stripe } = require("stripe");
 const payment = require("../utils/payment.js");
-const booking = require("../models/bookingModel.js");
+const cloudinary = require(`${__dirname}/../utils/cloudinary.js`);
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
   const service_provider = await User.findById(req.query.service_providerId);
-  console.log(service_provider);
   if (!service_provider) {
     return next(new appError("user has been deleted", 404));
   }
@@ -42,6 +40,8 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
     );
     res.status(201).json({
       status: "success",
+      message:
+        "تم ارسال الطلب الي السائق , عند قبول السائق للطلب سيظهر لك في الطلبات المقبولة برجاء متابعتها",
       ticket,
     });
   }
@@ -64,6 +64,7 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
     service_provider.acceptedTransactions.push(ticket);
     service_provider.currentTransactions.pop(ticket);
     ticket.bookCode = customer.createOTP();
+    //send otp to customer
     await ticket.save();
     customer.acceptedTransactions.push(ticket);
     customer.currentTransactions.pop(ticket);
@@ -103,24 +104,30 @@ exports.confirmProcess = catchAsync(async (req, res, next) => {
     return next(new appError("user has been deleted", 404));
   }
   const code = req.body.code;
-  if (req.user.role === "service_provider") {
-    if (code === ticket.bookCode) {
-      ticket.service_providerCode = true;
-      ticket.bookCode = undefined;
-      service_provider.available = true;
-      service_provider.doneTransactions.push(ticket);
-      service_provider.acceptedTransactions.pop(ticket);
-      customer.doneTransactions.push(ticket);
-      customer.acceptedTransactions.pop(ticket);
-      await ticket.save();
-      await service_provider.save({ validateBeforeSave: false });
-      await customer.save({ validateBeforeSave: false });
 
-      res.status(200).json({
-        status: "success",
-        message: "تهانينا علي اكمالك المهمة بنجاح!",
-      });
-    }
+  if (code === ticket.bookCode) {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      tags: "verfiy",
+      folder: "verfiy/",
+    });
+    ticket.image = result.secure_url;
+    ticket.service_providerCode = true;
+    ticket.bookCode = undefined;
+    service_provider.available = true;
+    service_provider.doneTransactions.push(ticket);
+    service_provider.acceptedTransactions.pop(ticket);
+    customer.doneTransactions.push(ticket);
+    customer.acceptedTransactions.pop(ticket);
+    await ticket.save();
+    await service_provider.save({ validateBeforeSave: false });
+    await customer.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      status: "success",
+      ticket,
+      message: "تهانينا علي اكمالك المهمة بنجاح!",
+    });
+
     // } else if (req.user.role === "customer") {
 
     //   if (code === ticket.bookCode) {
@@ -157,10 +164,7 @@ exports.getTicket = catchAsync(async (req, res, next) => {
 exports.paymentTicket = catchAsync(async (req, res, next) => {
   const product = await Booking.findById(req.query.ticket);
   if (product.paymentType == "card") {
-    const stripe = new Stripe(process.env.STRIPE_KEY);
-
     const session = await payment({
-      stripe,
       payment_method_types: ["card"],
       mode: "payment",
       customer_email: req.user.email,

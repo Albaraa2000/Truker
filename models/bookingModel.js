@@ -43,16 +43,17 @@ const bookingSchema = new mongoose.Schema({
       type: [Number],
       default: [0, 0], // Default coordinates (longitude, latitude)
     },
-    paymentType: {
-      type: String,
-      enum: ["card", "cash"],
-      default: "cash",
-    },
-    paid: {
-      type: Boolean,
-      default: false,
-    },
   },
+  paymentType: {
+    type: String,
+    enum: ["card", "cash"],
+    default: "cash",
+  },
+  paid: {
+    type: Boolean,
+    default: false,
+  },
+  image:String,
 });
 const booking = new mongoose.model("booking", bookingSchema);
 module.exports = booking;

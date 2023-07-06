@@ -2,7 +2,7 @@ const Stripe = require("stripe");
 
 async function payment({
   stripe = new Stripe(process.env.STRIPE_KEY),
-  payment_method_types = ["card"],
+  payment_method_types = ["card","cash"],
   mode = "payment",
   customer_email,
   metadata = {},

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bookingController = require("../controllers/bookingControllers");
 const truckControllers = require("../controllers/truckControllers");
-
+const upload = require("../utils/multer");
 const authController = require("../controllers/authControllers");
 
 router
@@ -30,7 +30,8 @@ router
   .route("/confirmProccess")
   .post(
     authController.protect,
-    authController.restrictTo("service_provider", "customer"),
+    authController.restrictTo("service_provider"),
+    upload.single("image"),
     bookingController.confirmProcess
   );
 router
