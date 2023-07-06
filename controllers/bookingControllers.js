@@ -3,12 +3,13 @@ const User = require("../models/userModel");
 const Truck = require("../models/truckModel");
 const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
-
-
+const { default: Stripe } = require("stripe");
+const payment = require("../utils/payment.js");
+const booking = require("../models/bookingModel.js");
 
 exports.bookTicket = catchAsync(async (req, res, next) => {
   const service_provider = await User.findById(req.query.service_providerId);
-  console.log(service_provider)
+  console.log(service_provider);
   if (!service_provider) {
     return next(new appError("user has been deleted", 404));
   }
@@ -71,6 +72,7 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
     await customer.save({ validateBeforeSave: false });
     res.status(201).json({
       success: true,
+      message: "تم قبول الطلب",
     });
   } else {
     service_provider.available = true;
@@ -152,6 +154,44 @@ exports.getTicket = catchAsync(async (req, res, next) => {
     ticket,
   });
 });
+exports.paymentTicket = catchAsync(async (req, res, next) => {
+  const product = await Booking.findById(req.query.ticket);
+  if (product.paymentType == "card") {
+    const stripe = new Stripe(process.env.STRIPE_KEY);
+
+    const session = await payment({
+      stripe,
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: req.user.email,
+      metadata: {
+        productId: product._id.toString(),
+      },
+      cancel_url: `${
+        process.env.CANCEL_URL
+      }?productId=${product._id.toString()}`,
+      line_items: [
+        {
+          price_data: {
+            product_data: {
+              name: Truck.name,
+            },
+            currency: "egp",
+            unit_amount: product.price * 100,
+          },
+          quantity: "1",
+        },
+      ],
+    });
+
+    return res
+      .status(200)
+      .json({ message: "done", product, session, url: session.url });
+  } else if (product.paymentType == "cash") {
+    return res.status(200).json({ message: "done", product, success: true });
+  }
+});
+
 // exports.deleteEquipment = catchAsync(async (req, res, next) => {
 //   const oneEquipment = await equipments.findById(req.params.id);
 //   if (!oneEquipment)
