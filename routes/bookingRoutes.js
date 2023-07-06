@@ -14,13 +14,11 @@ router
   );
 
 router.route("/").get(bookingController.getAllbooking);
-router
-  .route("/:id")
-  .get(
-    authController.protect,
-    // authController.restrictTo("customer"),
-    bookingController.getTicket
-  );
+router.route("/:id").get(
+  authController.protect,
+  // authController.restrictTo("customer"),
+  bookingController.getTicket
+);
 router
   .route("/confirm")
   .post(
@@ -32,8 +30,15 @@ router
   .route("/confirmProccess")
   .post(
     authController.protect,
-    authController.restrictTo("service_provider","customer"),
+    authController.restrictTo("service_provider", "customer"),
     bookingController.confirmProcess
+  );
+router
+  .route("/confirmPayment")
+  .post(
+    authController.protect,
+    authController.restrictTo("customer"),
+    bookingController.paymentTicket
   );
 //   .delete(authController.protect, bookingController.deleteEquipment)
 //   .patch(authController.protect, bookingController.updateEquipment);

@@ -15,12 +15,12 @@ const bookingSchema = new mongoose.Schema({
     default: false,
     required: true,
   },
-  price: { type: String, required: true },
+  price: { type: Number, required: true },
   description: { type: String, required: true },
-  bookCode:{
+  bookCode: {
     type: String,
   },
-  service_providerCode:{
+  service_providerCode: {
     type: Boolean,
     default: false,
   },
@@ -42,6 +42,15 @@ const bookingSchema = new mongoose.Schema({
     coordinates: {
       type: [Number],
       default: [0, 0], // Default coordinates (longitude, latitude)
+    },
+    paymentType: {
+      type: String,
+      enum: ["card", "cash"],
+      default: "cash",
+    },
+    paid: {
+      type: Boolean,
+      default: false,
     },
   },
 });
