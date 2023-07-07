@@ -16,7 +16,6 @@ const brandRouter = require("./routes/brandRoutes");
 const categoryRouter = require("./routes/categoryRoutes");
 const favoriteListRouter = require("./routes/favoriteListRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
-const subcategoryRouter = require("./routes/subcategoryRoutes");
 const truckRouter = require("./routes/truckRoutes");
 
 const helmet = require("helmet");
@@ -63,7 +62,6 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/brand", brandRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/review", reviewRouter);
-app.use("/api/v1/subcategory", subcategoryRouter);
 app.use("/api/v1/favoriteList", favoriteListRouter);
 app.use("/api/v1/truck", truckRouter);
 app.use("/api/v1/booking", bookingRouter);

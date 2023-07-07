@@ -25,11 +25,6 @@ const schema = Schema(
       ref: "category",
       required: [true, "truck category required"],
     },
-    subcategory: {
-      type: Types.ObjectId,
-      ref: "subcategory",
-      required: [true, "truck subcategory required"],
-    },
     brand: {
       type: Types.ObjectId,
       ref: "brand",
