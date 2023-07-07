@@ -15,8 +15,6 @@ router
 
 router.route("/").get(bookingController.getAllbooking);
 router.route("/:id").get(
-  authController.protect,
-  // authController.restrictTo("customer"),
   bookingController.getTicket
 );
 router

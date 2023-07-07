@@ -60,7 +60,7 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
   if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
 
-    service_provider.available = false;
+    // service_provider.available = false;
     service_provider.acceptedTransactions.push(ticket);
     service_provider.currentTransactions.pop(ticket);
     ticket.bookCode = customer.createOTP();
