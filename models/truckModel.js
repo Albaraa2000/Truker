@@ -19,7 +19,6 @@ const schema = Schema(
       minlength: [10, "too short truck description"],
     },
     imageCover: String,
-    images: [String],
     category: {
       type: Types.ObjectId,
       ref: "category",

@@ -5,7 +5,10 @@ const catchAsync = require("../utils/catchAsync");
 const appError = require("../utils/appError");
 const payment = require("../utils/payment.js");
 const cloudinary = require(`${__dirname}/../utils/cloudinary.js`);
+const twilio = require("./../utils/twilio");
 
+const client = require("twilio")(twilio.accountSid, twilio.authToken);
+const verifySid = twilio.verifySid;
 exports.bookTicket = catchAsync(async (req, res, next) => {
   const service_provider = await User.findById(req.query.service_providerId);
   if (!service_provider) {
@@ -22,7 +25,7 @@ exports.bookTicket = catchAsync(async (req, res, next) => {
       truckId: req.query.truckId,
       price: req.body.price,
       description: req.body.description,
-      paymentType:req.body.paymentType,
+      paymentType: req.body.paymentType,
       startLocation: { coordinates: req.body.startLocation },
       deliveryLocation: { coordinates: req.body.deliveryLocation },
     });
@@ -66,6 +69,12 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
     service_provider.currentTransactions.pop(ticket);
     ticket.bookCode = customer.createOTP();
     //send otp to customer
+    const verification = await client.verify.v2
+      .services(verifySid)
+      .verifications.create({
+        to: customer.phone,
+        channel: "sms",
+      });
     await ticket.save();
     customer.acceptedTransactions.push(ticket);
     customer.currentTransactions.pop(ticket);
@@ -105,15 +114,22 @@ exports.confirmProcess = catchAsync(async (req, res, next) => {
     return next(new appError("user has been deleted", 404));
   }
   const code = req.body.code;
-
-  if (code === ticket.bookCode) {
+  const verification = await client.verify.v2
+    .services(verifySid)
+    .verificationChecks.create({ to: customer.phone, code: code });
+  if (verification.valid == false) {
+    return next(
+      new appError("verfication failed please enter code again"),
+      404
+    );
+  }
+  if (verification.valid == true) {
     const result = await cloudinary.uploader.upload(req.file.path, {
       tags: "verfiy",
       folder: "verfiy/",
     });
     ticket.image = result.secure_url;
     ticket.service_providerCode = true;
-    ticket.bookCode = undefined;
     service_provider.available = true;
     service_provider.doneTransactions.push(ticket);
     service_provider.acceptedTransactions.pop(ticket);
@@ -125,20 +141,8 @@ exports.confirmProcess = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      ticket,
       message: "تهانينا علي اكمالك المهمة بنجاح!",
     });
-
-    // } else if (req.user.role === "customer") {
-
-    //   if (code === ticket.bookCode) {
-    //     ticket.service_providerCode = true;
-    //     await ticket.save();
-    //     res.status(200).json({
-    //       status: "success",
-    //       message: "we will take payment from your account",
-    //     });
-    //   }
   }
 });
 exports.getAllbooking = catchAsync(async (req, res, next) => {
