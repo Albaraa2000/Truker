@@ -5,7 +5,9 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
 const crypto = require("crypto");
-
+const twilio = require("./../utils/twilio");
+const client = require("twilio")(twilio.accountSid, twilio.authToken);
+const verifySid = twilio.verifySid;
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -13,7 +15,7 @@ const signToken = (id) => {
 };
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  res.cookie('token', token, {
+  res.cookie("token", token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
@@ -51,38 +53,39 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     role: req.body.role,
-    nationalId:req.body.nationalId
+    nationalId: req.body.nationalId,
     // location: { coordinates: req.body.location },
   });
-  sendOtp(newUser);
+  const verification = await client.verify.v2
+    .services(verifySid)
+    .verifications.create({
+      to: newUser.phone,
+      channel: "sms",
+    });
+  // sendOtp(newUser);
   createSendToken(newUser, 201, res);
 });
 
 module.exports.verfiy = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
+  console.log(user);
   if (user.verified === true) {
     return next(new AppError("Your account has been verified already."));
   }
   const otpCode = req.body.otpCode;
-  if (user.otpExpires > Date.now()) {
-    if (user.otp === otpCode) {
-      user.otp = undefined;
-      user.otpExpires = undefined;
-      user.verified = true;
-      await user.save({ validateBeforeSave: false });
-      res.status(200).json({
-        message: "verfied",
-      });
-    } else {
-      return next(new AppError("verfication failed"), 404);
-    }
-  } else {
-    return next(
-      new AppError(
-        "Your otp code has expired, please log in again to have new OTP"
-      ),
-      400
-    );
+  const verification = await client.verify.v2
+    .services(verifySid)
+    .verificationChecks.create({ to: user.phone, code: otpCode });
+  if (verification.valid == false) {
+    return next(new AppError("verfication failed please enter otp again"), 404);
+  }
+  if (verification.valid == true) {
+    user.verified = true;
+    await user.save({ validateBeforeSave: false });
+    res.status(200).json({
+      status: "success",
+      message: "Your account has been verified",
+    });
   }
 });
 exports.login = catchAsync(async (req, res, next) => {
@@ -101,7 +104,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   //  3) If everything ok, send token to client
   const token = signToken(user._id);
-  res.cookie('token', token, {
+  res.cookie("token", token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
