@@ -6,12 +6,10 @@ const errControllers = require("./controllers/errControllers");
 
 const AppError = require("./utils/appError");
 const limiter = require("./utils/rateLimit");
-const apiKeyMiddleware = require("./utils/apiKeyMiddleware");
 
 const bookingRouter = require("./routes/bookingRoutes");
 
 const userRouter = require("./routes/userRoutes");
-// const equipmentsRouter = require("./routes/equipmentsRoutes");
 const brandRouter = require("./routes/brandRoutes");
 const categoryRouter = require("./routes/categoryRoutes");
 const favoriteListRouter = require("./routes/favoriteListRoutes");
@@ -35,7 +33,7 @@ app.use(xss());
 app.use(hpp());
 
 app.use(express.static(`${__dirname}/public`));
-// app.use(limiter.limiter);
+app.use(limiter.limiter);
 
 app.use(cors()) 
 
@@ -56,9 +54,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-// app.use(apiKeyMiddleware);
 app.use("/api/v1/users", userRouter);
-// app.use("/api/v1/Equipments", equipmentsRouter);
 app.use("/api/v1/brand", brandRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/review", reviewRouter);

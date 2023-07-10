@@ -34,15 +34,6 @@ const schema = Schema(
       default:null,
       required: [true, "current location required"],
     },
-    // ratingAverage: {
-    //   type: Number,
-    //   min: [1, "ratingAverage must be greater than 1"],
-    //   min: [5, "ratingAverage must be less than 5"],
-    // },
-    // ratingCount: {
-    //   type: Number,
-    //   default: 0,
-    // },
     service_providerId: {
       type: String,
     },

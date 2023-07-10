@@ -64,11 +64,11 @@ exports.confirmTicket = catchAsync(async (req, res, next) => {
   if (req.body.booked === true && ticket.booked === false) {
     ticket.booked = true;
 
-    // service_provider.available = false;
+    service_provider.available = false;
     service_provider.acceptedTransactions.push(ticket);
     service_provider.currentTransactions.pop(ticket);
-    ticket.bookCode = customer.createOTP();
-    //send otp to customer
+
+    //send code to customer
     const verification = await client.verify.v2
       .services(verifySid)
       .verifications.create({
@@ -200,4 +200,3 @@ exports.paymentTicket = catchAsync(async (req, res, next) => {
     return res.status(200).json({ message: "done", product, success: true });
   }
 });
-
