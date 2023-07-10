@@ -1,6 +1,5 @@
 const User = require("../models/userModel");
 const Truck = require("../models/truckModel");
-const User_license = require("../models/User_license");
 const catchAsync = require(`${__dirname}/../utils/catchAsync.js`);
 const AppError = require(`${__dirname}/../utils/appError.js`);
 const cloudinary = require(`${__dirname}/../utils/cloudinary.js`);
